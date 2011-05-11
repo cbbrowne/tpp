@@ -1,0 +1,130 @@
+tpp - text presentation program
+===============================
+
+What is tpp?
+------------
+
+tpp stands for text presentation program and is an ncurses-based
+presentation tool. The presentation can be written with your favorite
+editor in a simple description format and then shown on any text
+terminal that is supported by ncurses - ranging from an old VT100 to the
+Linux framebuffer to an xterm.
+
+Installation
+------------
+
+Prerequisites: 
+  * Ruby 1.8 <http://www.ruby-lang.org/
+  * a recent version of ncurses
+  * ncurses-ruby <http://ncurses-ruby.berlios.de/>
+
+Optionalls:
+  * FIGlet (if you want to have huge text printed)
+
+Installing tpp:
+
+  Just copy tpp.rb to your favorite location, e.g. ~/bin or
+  /usr/local/bin.
+
+
+Using tpp
+---------
+
+
+Start tpp with the presentation file you would like to display:
+
+$ tpp presentation.tpp
+
+
+To control tpp, the following keys are available:
+
+space bar .............................. display next entry within page
+space bar, cursor-down, cursor-right ... display next page
+b, cursor-up, cursor-left .............. display previous page
+q, Q ................................... quit tpp
+j, J ................................... jump directly to page
+
+Writing tpp presentations
+-------------------------
+
+The tpp presentation formats consists of normal text lines and special
+commands. Special commands are contained in lines that begin with "--"
+and the command name.
+
+The presentation is divided into 1 more pages, which are separated by
+the "--newpage". Before the first "--newpage" is encountered, all
+non-command text is used as the presentation's abstract. Here, the
+title, the author and the date can be set, too. You can also optionally
+specify a name for a page, which append it to the "--newpage" command,
+separated by a single blank. If no name is set, a name will be
+automatically generated.
+
+Within a page, so-called "page-local" commands can be used. The
+following page-local commands are available:
+
+--heading <heading>: draw a heading. Headings will be centered and drawn
+    in bold (if supported by the terminal).
+
+--center <text>: center <text>. The text will be drawn centered.
+
+--right <text>: draw <text> right-oriented. When drawing the text, it
+    will be aligned on the right side of the terminal.
+
+---: stop drawing until space bar has been pressed.
+
+--beginoutput: marks the beginning of a framed output
+
+--endoutput: marks the end of a framed output
+
+--beginshelloutput: marks the beginning of a framed shell output. The
+    difference between normal output and shell output is that lines that
+    start with $ are printed as if they were typed by a person.
+
+--endshelloutput: marks the end of a shell output
+
+--sleep <seconds>: tpp stops for 3 seconds, doing nothing and accepting
+    no input.
+    
+--boldon: switches on bold printing
+--boldoff: switches off bold printing
+
+--revon: switches on reverse printing (i.e. reverse fg and bg colors)
+--revoff: switches off reverse printing
+
+--ulon: switches on underlined printing
+--uloff: switches off underlined printing
+
+--huge <text>: <text> is drawn in huge letters. FIGlet is used to
+    generate the huge letters.
+
+Examples
+--------
+
+For a collection of examples that demonstrate the different features
+of tpp, please have a look into the examples subdirectory in the tpp
+source distribution.
+
+
+License
+-------
+
+###############################################################################
+#                                                                             #
+#  tpp - text presentation program                                            #
+#  Copyright (C) 2004  Andreas Krennmair <ak@synflood.at>                     #
+#                                                                             #
+#  This program is free software; you can redistribute it and/or modify       #
+#  it under the terms of the GNU General Public License as published by       #
+#  the Free Software Foundation; either version 2 of the License, or          #
+#  (at your option) any later version.                                        #
+#                                                                             #
+#  This program is distributed in the hope that it will be useful,            #
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of             #
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              #
+#  GNU General Public License for more details.                               #
+#                                                                             #
+#  You should have received a copy of the GNU General Public License          #
+#  along with this program; if not, write to the Free Software                #
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA  #
+#                                                                             #
+###############################################################################
