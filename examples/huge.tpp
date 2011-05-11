@@ -15,4 +15,8 @@ Normaler Text
 ---
 Normal text.
 --newpage
+--sethugefont block 
+--huge other font
+--newpage
+--sethugefont standard
 --huge This is the end...

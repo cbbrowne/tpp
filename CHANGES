@@ -1,3 +1,12 @@
+1.1:
+  - fixed two spelling mistakes (one reported by Michael Prokop)
+  - added the possibility to set a custom format string for --date today
+  - added function check of ncurses-ruby
+  - fixed white space ignoring after color tag
+  - added vim syntax file for tpp files
+  - added new command "--sethugefont"
+  - added possibility of commenting out lines with --##
+
 1.0:
   - added manual page
   - fixed LaTeX converter

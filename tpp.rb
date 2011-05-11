@@ -1,8 +1,16 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
-require "ncurses"
-include Ncurses
+begin 
+  require "ncurses"
+  include Ncurses
 
+rescue LoadError
+  $stderr.print <<EOF
+  There is no Ncurses-Ruby package installed which is needed by TPP.
+  You can download it on: http://ncurses-ruby.berlios.de/
+EOF
+  Kernel.exit(1)
+end
 class ColorMap
 
   def ColorMap.get_color(color)
@@ -52,10 +60,6 @@ class Page
 
   def add_line(l)
     @lines << l
-  end
-
-  def add_lines(l)
-    l.each { |x| @lines << l }
   end
 
   def set_lines(l)
@@ -247,7 +251,9 @@ class FileParser
     f.each_line do |line|
       line.chomp!
       case line
-        when /^--title / # store title
+	    #comment
+        when /--##/
+		when /^--title / # store title
           @title = line.sub(/^--title /,"")
         when /^--author / # store author
           @author = line.sub(/^--author /,"")
@@ -255,6 +261,8 @@ class FileParser
           @date = line.sub(/^--date /,"")
           if @date == "today" then
             @date = Time.now.strftime("%b %d %Y")
+          elsif @date =~ /^today / then
+            @date = Time.now.strftime(@date.sub(/^today /,""))
           end
         when /^--bgcolor /
           tmp_bgcolor = line.sub(/^--bgcolor /,"")
@@ -337,6 +345,7 @@ class Pager
 
   def initialize(pages,bgcolor)
     @pages = pages
+    @figletfont ="standard"
     Ncurses.initscr
     Ncurses.curs_set(0)
     Ncurses.cbreak # unbuffered input
@@ -580,7 +589,7 @@ class Pager
         @cur_line += 1
         when /^--color /
           text = l.sub(/^--color /,"")
-          text.strip
+          text.strip!
           num = ColorMap.get_color_pair(text)
           Ncurses.attron(Ncurses.COLOR_PAIR(num))
           @current_color_pair = num
@@ -684,11 +693,14 @@ class Pager
         when /^--beginslidebottom/
           @slideoutput = true
           @slidedir = "bottom"
+        when /^--sethugefont /
+          params = l.sub(/^--sethugefont /,"")
+          @figletfont = params.strip
         when /^--huge /
           figlet_text = l.sub(/^--huge /,"")
           output_width = @termwidth - @indent
           output_width -= 2 if @output or @shelloutput
-          op = IO.popen("figlet -w #{output_width} -k \"#{figlet_text}\"","r")
+          op = IO.popen("figlet -f #{@figletfont} -w #{output_width} -k \"#{figlet_text}\"","r")
           op.readlines.each do |line|
             print_line(line)
           end
@@ -834,7 +846,7 @@ ARGV.each_index do |i|
       latex_filename = ARGV[i+1]
       skip_next = true
     elsif ARGV[i] == "-h" or ARGV[i] == "--help" then
-      printf "tpp - text presenatation program %s\n", version_number
+      printf "tpp - text presentation program %s\n", version_number
     elsif filename == nil then
       filename = ARGV[i]
     end
@@ -844,7 +856,7 @@ end
 
 if filename == nil then
   $stderr.puts "usage: #{$0} [options] <file>"
-  $stderr.puts "\nOptions: -l <outputfile> <file> convert presenation to latex"
+  $stderr.puts "\nOptions: -l <outputfile> <file> convert presentation to latex"
   $stderr.puts "\t --help\t\t\tprints this help"
   Kernel.exit(1)
 end

@@ -74,7 +74,10 @@ The following commands are allowed in the abstract page:
 --title: sets the title of the presentation
 
 --date: sets the date of the presentation. If the date is "today", today's
-    date is inserted instead.
+    date is inserted instead. You can set a custom format string if you append 
+    it after "today", separated by a blank. Date formats are like formats for 
+    date(1), and documented in this manual page. If no format string is supplied,
+    "%b %d %Y" is assumed as default.
 
 --bgcolor <color>: the background color is set to <color>.
 
@@ -124,6 +127,10 @@ following page-local commands are available:
 --huge <text>: <text> is drawn in huge letters. FIGlet is used to
     generate the huge letters.
 
+--sethugefont <font>: If you use --huge FIGlet will use 
+    the specified <font> to generate the huge letters.
+	You will find the names of the available fonts in the figlet manual.
+
 --exec <cmd>: executes <cmd>. Useful for e.g. starting image viewers.
 
 --beginslideleft: starts the "slide in from left" mode
@@ -140,6 +147,8 @@ following page-local commands are available:
 --beginslidebottom: starts the "slide in from the bottom" mode
 --endslidebottom: ends the "slide in from the bottom" mode
 
+You can comment lines using --##
+
 Examples
 --------
 
@@ -151,7 +160,30 @@ Options:
 --------
 
 tpp --help: displays help in text mode
-tpp -l output input.tpp: converts tpp file in tex
+tpp -l output input.tpp: converts tpp file into a LaTeX slide
+
+The LaTeX slide output option is currently unsupported and will most likely not
+work correctly!
+
+Vim syntax file
+---------------
+To use the vim syntax file you have to copy the tpp.vim file into ~/.vim/syntax/.
+If the directory does not exist you have to create it.
+In the next step you have to copy the following into ~/.vim/filetype.vim:
+
+if exists("did_load_filetypes")
+	finish
+endif
+augroup filetype detect
+	au! BufRead,BufNewFile *.tpp  setfiletype tpp
+augroup END
+
+If your vim editor does not use syntax highlighting in the default setup you have to
+change to the vim command mode and type: syntax on.
+
+Beside the tpp.vim in the contrib subdirectory, there's also another, more sophisticated
+version, which we unfortunately cannot distribute due to license reason. You can find
+this file at http://www.trish.de/downloads/tpp.vim
 
 License
 -------
