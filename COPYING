@@ -1,14 +1,3 @@
-
-trapdoor2 (td2) is licenced under the terms of GPL Version 2.
-
-The file "apr_md5.c" is part of the Apache library and is licensed under
-the Apache License, Version 2.0. It's not part of td2, it is a library
-dependency of td2 which is included in the td2 source archive for 
-simplification.
-
-...........................................................................
-
-
 		    GNU GENERAL PUBLIC LICENSE
 		       Version 2, June 1991
 

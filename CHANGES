@@ -1,0 +1,13 @@
+0.2:
+  - end-of-page notification added
+  - LaTeX conversion mode added (still incomplete!)
+  - support for setting colors for foreground and background added
+  - added possibility to slide in text from all left, right, top and bottom
+  - added possibility to show slides with border around
+  - added command line, you can execute system command during the presentation
+    without change the window. They will be displayed in the slide.
+  - added the possibility to jump to the start and the end of the slides with one key
+  - exec-feature, you can execute commands in you slide directly
+
+0.1:
+  initial release

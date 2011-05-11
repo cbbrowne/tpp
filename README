@@ -14,11 +14,11 @@ Installation
 ------------
 
 Prerequisites: 
-  * Ruby 1.8 <http://www.ruby-lang.org/
+  * Ruby 1.8 <http://www.ruby-lang.org/>
   * a recent version of ncurses
   * ncurses-ruby <http://ncurses-ruby.berlios.de/>
 
-Optionalls:
+Optionally:
   * FIGlet (if you want to have huge text printed)
 
 Installing tpp:
@@ -43,6 +43,15 @@ space bar, cursor-down, cursor-right ... display next page
 b, cursor-up, cursor-left .............. display previous page
 q, Q ................................... quit tpp
 j, J ................................... jump directly to page
+s, S ................................... jump to the start page
+e, E ................................... jump to the last page
+c, C ................................... start command line
+
+On the lower left side of your terminal you will notice the current slide
+number and the total number of slides. Left of that, a '*' will appear when
+pressing space bar the next time would show the next slide. If no '*' appears,
+pressing space bar the next time will show the next entry on the page
+(separated by '---').
 
 Writing tpp presentations
 -------------------------
@@ -51,7 +60,7 @@ The tpp presentation formats consists of normal text lines and special
 commands. Special commands are contained in lines that begin with "--"
 and the command name.
 
-The presentation is divided into 1 more pages, which are separated by
+The presentation is divided into 1 or more pages, which are separated by
 the "--newpage". Before the first "--newpage" is encountered, all
 non-command text is used as the presentation's abstract. Here, the
 title, the author and the date can be set, too. You can also optionally
@@ -59,11 +68,28 @@ specify a name for a page, which append it to the "--newpage" command,
 separated by a single blank. If no name is set, a name will be
 automatically generated.
 
+The following commands are allowed in the abstract page:
+
+--author: sets the author of the presentation
+
+--title: sets the title of the presentation
+
+--date: sets the date of the presentation. If the date is "today", today's
+    date is inserted instead.
+
+--bgcolor <color>: the background color is set to <color>.
+
+--fgcolor <color>: the foreground color is set to <color>.
+
+Valid colors are white, yellow, red, green, blue, cyan, magenta, black.
+
 Within a page, so-called "page-local" commands can be used. The
 following page-local commands are available:
 
 --heading <heading>: draw a heading. Headings will be centered and drawn
     in bold (if supported by the terminal).
+
+--color <color>: draw the text with specified color until a new color is set
 
 --center <text>: center <text>. The text will be drawn centered.
 
@@ -97,6 +123,22 @@ following page-local commands are available:
 --huge <text>: <text> is drawn in huge letters. FIGlet is used to
     generate the huge letters.
 
+--exec <cmd>: executes <cmd>. Useful for e.g. starting image viewers.
+
+--beginslideleft: starts the "slide in from left" mode
+--endslideleft: ends the "slide in from left" mode
+
+--beginslideright: starts the "slide in from right" mode
+--endslideright: ends the "slide in from right" mode
+
+--beginslidetop: starts the "slide in from the top" mode
+--endslidetop: ends the "slide in from the top" mode
+
+--withborder: makes a border around the current page
+
+--beginslidebottom: starts the "slide in from the bottom" mode
+--endslidebottom: ends the "slide in from the bottom" mode
+
 Examples
 --------
 
@@ -108,23 +150,24 @@ source distribution.
 License
 -------
 
-###############################################################################
-#                                                                             #
-#  tpp - text presentation program                                            #
-#  Copyright (C) 2004  Andreas Krennmair <ak@synflood.at>                     #
-#                                                                             #
-#  This program is free software; you can redistribute it and/or modify       #
-#  it under the terms of the GNU General Public License as published by       #
-#  the Free Software Foundation; either version 2 of the License, or          #
-#  (at your option) any later version.                                        #
-#                                                                             #
-#  This program is distributed in the hope that it will be useful,            #
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of             #
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              #
-#  GNU General Public License for more details.                               #
-#                                                                             #
-#  You should have received a copy of the GNU General Public License          #
-#  along with this program; if not, write to the Free Software                #
-#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA  #
-#                                                                             #
-###############################################################################
+########################################################################################
+#                                                                                      #
+#  tpp - text presentation program                                                     #
+#  Copyright (C) 2004  Andreas Krennmair <ak@synflood.at>, Nico Golde <nico@ngolde.de  #                  
+#                                                                                      #
+#  This program is free software; you can redistribute it and/or modify                #
+#  it under the terms of the GNU General Public License as published by                #
+#  the Free Software Foundation; either version 2 of the License, or                   #
+#  (at your option) any later version.                                                 #
+#                                                                                      #
+#  This program is distributed in the hope that it will be useful,                     #
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of                      #
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                       #
+#  GNU General Public License for more details.                                        #
+#                                                                                      # 
+#  You should have received a copy of the GNU General Public License                   #
+#  along with this program; if not, write to the Free Software                         #
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA           #
+#                                                                                      #
+########################################################################################
+

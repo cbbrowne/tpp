@@ -21,6 +21,8 @@ asdf jklö
 --revoff
 jjjjjjjjjjjjjjjjjjjjjjjjjjj
 --newpage
+--heading This is the heading
+
 This should be normal
 --ulon
 This should be underlined
@@ -28,9 +30,11 @@ This should be underlined
 This should be underlined and reverse
 --boldon
 This should be underlined, reverse and bold
+--center This should be underlined, reverse, bold and centered
 --uloff
 This should be reverse and bold
 --revoff
 This should be bold
 --boldoff
 This should be normal again
+--huge This Is Huge!
