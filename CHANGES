@@ -1,3 +1,8 @@
+1.3:
+  - implemented text output mode
+  - implemented (working) LaTeX output mode
+  - refactored controller/visualizer architecture to be more generic
+
 1.2:
   - heavily refactored tpp code
   - added line wrapping
@@ -8,7 +13,6 @@
 
 1.1.1:
   - added version number command line option
-  - added support for transparent terminals
 
 1.1:
   - fixed two spelling mistakes (one reported by Michael Prokop)

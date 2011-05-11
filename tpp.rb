@@ -1,18 +1,27 @@
 #!/usr/bin/env ruby
 
-begin
-  require "ncurses"
-  include Ncurses
-rescue LoadError
-  $stderr.print <<EOF
+version_number = "1.3"
+
+# Loads the ncurses-ruby module and imports "Ncurses" into the
+# current namespace. It stops the program if loading the
+# ncurses-ruby module fails.
+def load_ncurses
+  begin
+    require "ncurses"
+    include Ncurses
+  rescue LoadError
+    $stderr.print <<EOF
   There is no Ncurses-Ruby package installed which is needed by TPP.
   You can download it on: http://ncurses-ruby.berlios.de/
 EOF
-  Kernel.exit(1)
+    Kernel.exit(1)
+  end
 end
 
+# Maps color names to constants and indexes.
 class ColorMap
 
+  # Maps color name _color_ to a constant
   def ColorMap.get_color(color)
     colors = { "white" => COLOR_WHITE,
                "yellow" => COLOR_YELLOW,
@@ -26,6 +35,7 @@ class ColorMap
     colors[color]
   end
 
+  # Maps color name to a color pair index
   def ColorMap.get_color_pair(color)
     colors = { "white" => 1,
                "yellow" => 2,
@@ -41,11 +51,7 @@ class ColorMap
 
 end
 
-# FileParser
-# opens a tpp source file, and splits it into the different pages
-# methods:
-# * initialize(filename): constructor
-# * get_pages: returns the parsed pages
+# Opens a TPP source file, and splits it into the different pages.
 class FileParser
 
   def initialize(filename)
@@ -53,6 +59,7 @@ class FileParser
     @pages = []
   end
 
+  # Parses the specified file and returns an array of Page objects
   def get_pages
     begin
       f = File.open(@filename)
@@ -68,7 +75,7 @@ class FileParser
     f.each_line do |line|
       line.chomp!
       case line
-        when /--##/ # ignore comments
+        when /^--##/ # ignore comments
         when /^--newpage/
           @pages << cur_page
           number_pages += 1
@@ -88,16 +95,8 @@ class FileParser
 end # class FileParser
 
 
-# class Page
-# represents a page in tpp. A page contains of one or more lines and a title.
-# methods:
-# * initialize(title): constructor
-# * add_line(line): appends a line to the current page
-# * next_line: returns the next line. If there are not more lines, it returns nil, and eop is set to true
-# * eop?: returns whether we reached the end of the page
-# * reset_eop: reesets the end of page flag and sets the current line to the first line.
-# * lines: returns all lines as array
-# * name: returns the title of the page
+# Represents a page (aka `slide') in TPP. A page consists of a title and one or 
+# more lines.
 class Page
 
   def initialize(title)
@@ -107,10 +106,12 @@ class Page
     @eop = false
   end
 
+  # Appends a line to the page, but only if _line_ is not null
   def add_line(line)
     @lines << line if line
   end
 
+  # Returns the next line. In case the last line is hit, then the end-of-page marker is set.
   def next_line
     line = @lines[@cur_line]
     @cur_line += 1
@@ -120,33 +121,69 @@ class Page
     return line
   end
 
+  # Returns whether end-of-page has been reached.
   def eop?
     @eop
   end
 
+  # Resets the end-of-page marker and sets the current line marker to the first line
   def reset_eop
     @cur_line = 0
     @eop = false
   end
 
+  # Returns all lines in the page.
   def lines
     @lines
   end
 
-  def name
+  # Returns the page's title
+  def title
     @title
   end
 end
 
 
 
-# class TppVisualizer
-# generic class from which all visualizers need to be derived
-# all the methods are only implemented because there are no pure virtual functions in ruby
+# Implements a generic visualizer from which all other visualizers need to be 
+# derived. If Ruby supported abstract methods, all the do_* methods would be 
+# abstract.
 class TppVisualizer
 
   def initialize
     # nothing
+  end
+
+  # Splits a line into several lines, where each of the result lines is at most 
+  # _width_ characters long, caring about word boundaries, and returns an array 
+  # of strings.
+  def split_lines(text,width)
+    lines = []
+    if text then
+      begin
+        i = width
+        if text.length <= i then # text length is OK -> add it to array and stop splitting
+          lines << text
+          text = ""
+        else
+          # search for word boundary (space actually)
+          while i > 0 and text[i] != ' '[0] do
+            i -= 1
+          end
+          # if we can't find any space character, simply cut it off at the maximum width
+          if i == 0 then
+            i = width
+          end
+          # extract line
+          x = text[0..i-1]
+          # remove extracted line
+          text = text[i+1..-1]
+          # added line to array
+          lines << x
+        end
+      end while text.length > 0
+    end
+    return lines
   end
 
   def do_footer(footer_text)
@@ -340,9 +377,9 @@ class TppVisualizer
     Kernel.exit(1)
   end
 
-  # visualize receives a line, parses it if necessary, and dispatches it 
-  # to the correct method when then does the correct processing
-  # returns whether the controller shall wait for input
+  # Receives a _line_, parses it if necessary, and dispatches it 
+  # to the correct method which then does the correct processing.
+  # It returns whether the controller shall wait for input.
   def visualize(line,eop)
     case line
       when /^--heading /
@@ -408,12 +445,12 @@ class TppVisualizer
         figlet_text = line.sub(/^--huge /,"")
         do_huge(figlet_text)
       when /^--footer /
-	    @footer_txt = line.sub(/^--footer /,"")
+        @footer_txt = line.sub(/^--footer /,"")
         do_footer(@footer_txt) 
       when /^--header /
-	    @header_txt = line.sub(/^--header /,"")
+        @header_txt = line.sub(/^--header /,"")
         do_header(@header_txt) 
-	  when /^--title /
+      when /^--title /
         title = line.sub(/^--title /,"")
         do_title(title)
       when /^--author /
@@ -449,13 +486,7 @@ class TppVisualizer
 
 end
 
-# class NcursesVisualizer
-# a TppVisualizer for ncurses output
-# methods:
-# * initialize: initializes ncurses and sets several default values
-# * split_lines: split a line on word boundaries, takes a maximum line length, 
-#                returns an array of strings guaranteed shorter to be shorter
-#                or as long as the maximum length
+# Implements an interactive visualizer which builds on top of ncurses.
 class NcursesVisualizer < TppVisualizer
 
   def initialize
@@ -479,39 +510,29 @@ class NcursesVisualizer < TppVisualizer
     @output = @shelloutput = false
   end
 
+  def get_key
+    ch = @screen.getch
+    case ch
+      when Ncurses::KEY_RIGHT
+        return :keyright
+      when Ncurses::KEY_DOWN
+        return :keydown
+      when Ncurses::KEY_LEFT
+        return :keyleft
+      when Ncurses::KEY_UP
+        return :keyup
+      when Ncurses::KEY_RESIZE
+        return :keyresize
+      else
+        return ch
+      end
+  end
+
   def clear
     @screen.clear
     @screen.refresh
   end
 
-  def split_lines(text,width)
-    lines = []
-    if text then
-      begin
-        i = width
-        if text.length <= i then # text length is OK -> add it to array and stop splitting
-          lines << text
-          text = ""
-        else
-          # search for word boundary (space actually)
-          while i > 0 and text[i] != ' '[0] do
-            i -= 1
-          end
-          # if we can't find any space character, simply cut it off at the maximum width
-          if i == 0 then
-            i = width
-          end
-          # extract line
-          x = text[0..i-1]
-          # remove extracted line
-          text = text[i+1..-1]
-          # added line to array
-          lines << x
-        end
-      end while text.length > 0
-    end
-    return lines
-  end
 
   def setsizes
     @termwidth = Ncurses.getmaxx(@screen)
@@ -580,6 +601,8 @@ class NcursesVisualizer < TppVisualizer
           Ncurses.beep
       end
     end
+    Ncurses.curs_set(0)
+
   end
 
   def draw_border
@@ -952,9 +975,9 @@ class NcursesVisualizer < TppVisualizer
     pages.each_index do |i|
       @screen.move(line,col*15 + 2)
       if current_page == i then
-        @screen.printw("%2d %s <=",i+1,pages[i].name[0..80])
+        @screen.printw("%2d %s <=",i+1,pages[i].title[0..80])
       else  
-        @screen.printw("%2d %s",i+1,pages[i].name[0..80])
+        @screen.printw("%2d %s",i+1,pages[i].title[0..80])
       end
       line += 1
       if line >= @termheight - 3 then
@@ -1012,9 +1035,8 @@ class NcursesVisualizer < TppVisualizer
 end
 
 
-# class LinuxdocVisualizer
-# converts tpp source to LinuxDoc SGML
-class LinuxdocVisualizer < TppVisualizer
+# Implements a visualizer which converts TPP source to LaTeX-beamer source (http://latex-beamer.sf.net/
+class LatexVisualizer < TppVisualizer
 
   def initialize(outputfile)
     @filename = outputfile
@@ -1024,11 +1046,33 @@ class LinuxdocVisualizer < TppVisualizer
       $stderr.print "Error: couldn't open file: #{$!}"
       Kernel.exit(1)
     end
-    @f.puts "<!doctype linuxdoc system>\n<article>"
-    @need_p = true
-    @verb = false
-    @had_sect = false
-    @itemize_open = false
+    @slide_open = false
+    @verbatim_open = false
+    @width = 50
+    @title = @date = @author = false
+    @begindoc = false
+    @f.puts '% Filename:      tpp.tex
+% Purpose:       template file for tpp latex export
+% Authors:       (c) Andreas Gredler, Michael Prokop http://grml.org/
+% License:       This file is licensed under the GPL v2.
+% Latest change: Fre Apr 15 20:34:37 CEST 2005
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass{beamer}
+
+\mode<presentation>
+{
+  \usetheme{Montpellier}
+  \setbeamercovered{transparent}
+}
+
+\usepackage[german]{babel}
+\usepackage{umlaut}
+\usepackage[latin1]{inputenc}
+\usepackage{times}
+\usepackage[T1]{fontenc}
+
+'
   end
 
   def do_footer(footer_text)
@@ -1040,20 +1084,24 @@ class LinuxdocVisualizer < TppVisualizer
   def do_refresh
   end
 
+  def try_close
+    if @verbatim_open then
+      @f.puts '\end{verbatim}'
+      @verbatim_open = false
+    end
+    if @slide_open then
+      @f.puts '\end{frame}'
+      @slide_open = false
+    end
+  end
+
   def new_page
+    try_close
   end
 
   def do_heading(text)
-    if not @need_p then
-      if @had_sect then
-        #@f.puts "</p>"
-      else
-        @f.puts "</abstract>"
-      end
-      @need_p = true
-    end
-    @f.puts "<sect>#{text}"
-    @had_sect = true
+    try_close
+    @f.puts "\\section{#{text}}"
   end
 
   def do_withborder
@@ -1066,9 +1114,11 @@ class LinuxdocVisualizer < TppVisualizer
   end
 
   def do_center(text)
+    print_line(text)
   end
 
   def do_right(text)
+    print_line(text)
   end
 
   def do_exec(cmdline)
@@ -1078,34 +1128,25 @@ class LinuxdocVisualizer < TppVisualizer
   end
 
   def do_beginoutput
-    @f.puts "<p><tscreen><verb>"
-    @verb_mode = true
+    # TODO: implement output stuff
   end
 
   def do_beginshelloutput
-    @f.puts "<p><tscreen><verb>"
-    @verb_mode = true
   end
 
   def do_endoutput
-    @f.puts "</verb></tscreen>"
-    @verb_mode = false
   end
 
   def do_endshelloutput
-    @f.puts "</verb></tscreen>"
-    @verb_mode = false
   end
 
   def do_sleep(time2sleep)
   end
 
   def do_boldon
-    @f.puts "<bf>"
   end
 
   def do_boldoff
-    @f.puts "</bf>"
   end
 
   def do_revon
@@ -1143,56 +1184,56 @@ class LinuxdocVisualizer < TppVisualizer
   def do_huge(text)
   end
 
+  def try_open
+    if not @begindoc then
+      @f.puts '\begin{document}'
+      @begindoc = true
+    end
+    if not @slide_open then
+      @f.puts '\begin{frame}[fragile]'
+      @slide_open = true
+    end
+    if not @verbatim_open then
+      @f.puts '\begin{verbatim}'
+      @verbatim_open = true
+    end
+  end
+
+  def try_intro
+    if @author and @title and @date and not @begindoc then
+      @f.puts '\begin{document}'
+      @begindoc = true
+    end
+    if @author and @title and @date then
+      @f.puts '\begin{frame}
+        \titlepage
+      \end{frame}'
+    end
+  end
+
   def print_line(line)
-    if not @verb_mode then
-      if @need_p then
-        if line.strip != "" then
-          if @had_sect then
-            @f.print "<p>"
-          else
-            @f.print "<abstract>"
-          end
-          @need_p = false
-        end
-      end
-    end
-    if line =~ /^ *\*/ then
-      line.sub!(/^ *\*/,"")
-      if @itemize_open then
-        @f.puts "<item> #{line}"
-      else
-        @f.puts "<itemize> <item> #{line}"
-        @itemize_open = true
-      end
-    else
-      if @itemize_open then
-        @itemize_open = false
-        @f.puts "</itemize>"
-      end
-      @f.puts "#{line}"
-    end
-    if not @verb_mode then
-      if line.strip == "" and not @need_p then
-        if @had_sect then
-          #@f.puts "</p>"
-        else
-          @f.puts "</abstract>"
-        end
-        @need_p = true
-      end
+    try_open
+    split_lines(line,@width).each do |l|
+      @f.puts "#{l}"
     end
   end
 
   def do_title(title)
-    @f.puts "<title>#{title}"
+    @f.puts "\\title[#{title}]{#{title}}"
+    @title = true
+    try_intro
   end
 
   def do_author(author)
-    @f.puts "<author>#{author}"
+    @f.puts "\\author{#{author}}"
+    @author = true
+    try_intro
   end
 
   def do_date(date)
-    @f.puts "<date>#{date}"
+    @f.puts "\\date{#{date}}"
+    @date = true
+    try_intro
   end
 
   def do_bgcolor(color)
@@ -1205,15 +1246,16 @@ class LinuxdocVisualizer < TppVisualizer
   end
 
   def close
-    @f.puts "</article>"
+    try_close
+    @f.puts '\end{document}
+    %%%%% END OF FILE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'
     @f.close
   end
 
 end
 
 
-# class TppController
-# generic controller that does nothing
+# Implements a generic controller from which all other controllers need to be derived.
 class TppController
 
   def initialize
@@ -1233,13 +1275,13 @@ class TppController
 
 end
 
-# class NcursesController
-# controls both the keyboard input and what needs to be printed
-class NcursesController < TppController
+# Implements a non-interactive controller for ncurses. Useful for displaying
+# unattended presentation.
+class AutoplayController < TppController
 
-  def initialize(filename)
+  def initialize(filename,visualizer_class)
     @filename = filename
-    @vis = NcursesVisualizer.new
+    @vis = visualizer_class.new
     @cur_page = 0
   end
 
@@ -1262,7 +1304,64 @@ class NcursesController < TppController
   end
 
   def do_run
-    window = Ncurses.stdscr
+    loop do
+      wait = false
+      @vis.draw_slidenum(@cur_page + 1, @pages.size, false)
+      # read and visualize lines until the visualizer says "stop" or we reached end of page
+      begin
+        line = @pages[@cur_page].next_line
+        eop = @pages[@cur_page].eop?
+        wait = @vis.visualize(line,eop)
+      end while not wait and not eop
+      # draw slide number on the bottom left and redraw:
+      @vis.draw_slidenum(@cur_page + 1, @pages.size, eop)
+      @vis.do_refresh
+
+      if eop then
+        if @cur_page + 1 < @pages.size then
+          @cur_page += 1
+        else
+          @cur_page = 0
+        end
+        @pages[@cur_page].reset_eop
+        @vis.new_page
+      end
+
+      Kernel.sleep(1)
+    end # loop
+  end
+
+end
+
+# Implements an interactive controller which feeds the visualizer until it is 
+# told to stop, and then reads a key press and executes the appropiate action.
+class InteractiveController < TppController
+
+  def initialize(filename,visualizer_class)
+    @filename = filename
+    @vis = visualizer_class.new
+    @cur_page = 0
+  end
+
+  def close
+    @vis.close
+  end
+
+  def run
+    begin
+      @reload_file = false
+      parser = FileParser.new(@filename)
+      @pages = parser.get_pages
+      if @cur_page >= @pages.size then
+        @cur_page = @pages.size - 1
+      end
+      @vis.clear
+      @vis.new_page
+      do_run
+    end while @reload_file
+  end
+
+  def do_run
     loop do
       wait = false
       @vis.draw_slidenum(@cur_page + 1, @pages.size, false)
@@ -1279,7 +1378,7 @@ class NcursesController < TppController
       # read a character from the keyboard
       # a "break" in the when means that it breaks the loop, i.e. goes on with visualizing lines
       loop do
-        ch = window.getch
+        ch = @vis.get_key
         case ch
           when 'q'[0], 'Q'[0] # 'Q'uit
             return
@@ -1308,30 +1407,29 @@ class NcursesController < TppController
           when 'c'[0], 'C'[0] # command prompt
             screen = @vis.store_screen
             @vis.do_command_prompt
-            #ch = window.getch
             @vis.clear
             @vis.restore_screen(screen)
           when '?'[0], 'h'[0]
             screen = @vis.store_screen
             @vis.show_help_page
-            ch = window.getch
+            ch = @vis.get_key
             @vis.clear
             @vis.restore_screen(screen)
-          when Ncurses::KEY_RIGHT, Ncurses::KEY_DOWN, ' '[0]
+          when :keyright, :keydown, ' '[0]
             if @cur_page + 1 < @pages.size and eop then
               @cur_page += 1
               @pages[@cur_page].reset_eop
               @vis.new_page
             end
             break
-          when 'b'[0], 'B'[0], Ncurses::KEY_LEFT, Ncurses::KEY_UP
+          when 'b'[0], 'B'[0], :keyleft, :keyup
             if @cur_page > 0 then
               @cur_page -= 1
               @pages[@cur_page].reset_eop
               @vis.new_page
             end
             break
-          when Ncurses::KEY_RESIZE
+          when :keyresize
             @vis.setsizes
         end
       end
@@ -1341,12 +1439,210 @@ class NcursesController < TppController
 end
 
 
-class LinuxdocController
+# Implements a visualizer which converts TPP source to a nicely formatted text 
+# file which can e.g. be used as handout.
+class TextVisualizer < TppVisualizer
 
-  def initialize(input,output)
+  def initialize(outputfile)
+    @filename = outputfile
+    begin
+      @f = File.open(@filename,"w+")
+    rescue
+      $stderr.print "Error: couldn't open file: #{$!}"
+      Kernel.exit(1)
+    end
+    @output_env = false
+    @title = @author = @date = false
+    @figletfont = "small"
+    @width = 80
+  end
+
+  def do_footer(footer_text)
+  end
+  
+  def do_header(header_text)
+  end
+
+  def do_refresh
+  end
+
+  def new_page
+    @f.puts "--------------------------------------------"
+  end
+
+  def do_heading(text)
+    @f.puts "\n"
+    split_lines(text,@width).each do |l|
+      @f.puts "#{l}\n"
+    end
+    @f.puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+  end
+
+  def do_withborder
+  end
+
+  def do_horline
+    @f.puts "********************************************"
+  end
+
+  def do_color(text)
+  end
+
+  def do_exec(cmdline)
+  end
+
+  def do_wait
+  end
+
+  def do_beginoutput
+    @f.puts ".---------------------------"
+    @output_env = true
+  end
+
+  def do_beginshelloutput
+    do_beginoutput
+  end
+
+  def do_endoutput
+    @f.puts "`---------------------------"
+    @output_env = false
+  end
+
+  def do_endshelloutput
+    do_endoutput
+  end
+
+  def do_sleep(time2sleep)
+  end
+
+  def do_boldon
+  end
+
+  def do_boldoff
+  end
+
+  def do_revon
+  end
+ 
+  def do_command_prompt
+  end
+  def do_revoff
+  end
+
+  def do_ulon
+  end
+
+  def do_uloff
+  end
+
+  def do_beginslideleft
+  end
+
+  def do_endslide
+  end
+  
+  def do_beginslideright
+  end
+
+  def do_beginslidetop
+  end
+
+  def do_beginslidebottom
+  end
+
+  def do_sethugefont(text)
+    @figletfont = text
+  end
+
+  def do_huge(text)
+    output_width = @width
+    output_width -= 2 if @output_env
+    op = IO.popen("figlet -f #{@figletfont} -w @output_width -k \"#{text}\"","r")
+    op.readlines.each do |line|
+      print_line(line)
+    end
+    op.close
+  end
+
+  def print_line(line)
+    lines = split_lines(line,@width)
+    lines.each do |l|
+      if @output_env then
+        @f.puts "| #{l}"
+      else
+        @f.puts "#{l}"
+      end
+    end
+  end
+
+  def do_center(text)
+    lines = split_lines(text,@width)
+    lines.each do |line|
+      spaces = (@width - line.length) / 2
+      spaces = 0 if spaces < 0
+      spaces.times { line = " " + line }
+      print_line(line)
+    end
+  end
+
+  def do_right(text)
+    lines = split_lines(text,@width)
+    lines.each do |line|
+      spaces = @width - line.length
+      spaces = 0 if spaces < 0
+      spaces.times { line = " " + line }
+      print_line(line)
+    end
+  end
+
+  def do_title(title)
+    @f.puts "Title: #{title}"
+    @title = true
+    if @title and @author and @date then
+      @f.puts "\n\n"
+    end
+  end
+
+  def do_author(author)
+    @f.puts "Author: #{author}"
+    @author = true
+    if @title and @author and @date then
+      @f.puts "\n\n"
+    end
+  end
+
+  def do_date(date)
+    @f.puts "Date: #{date}"
+    @date = true
+    if @title and @author and @date then
+      @f.puts "\n\n"
+    end
+  end
+
+  def do_bgcolor(color)
+  end
+
+  def do_fgcolor(color)
+  end
+
+  def do_color(color)
+  end
+
+  def close
+    @f.close
+  end
+
+end
+
+# Implements a non-interactive controller to control non-interactive 
+# visualizers (i.e. those that are used for converting TPP source code into 
+# another format)
+class ConversionController < TppController
+
+  def initialize(input,output,visualizer_class)
     parser = FileParser.new(input)
     @pages = parser.get_pages
-    @vis = LinuxdocVisualizer.new(output)
+    @vis = visualizer_class.new(output)
   end
 
   def run
@@ -1365,16 +1661,22 @@ class LinuxdocController
 
 end
 
-
+# Prints a nicely formatted usage message.
 def usage
   $stderr.puts "usage: #{$0} [-t <type> -o <file>] <file>\n"
   $stderr.puts "\t -t <type>\t\tset filetype <type> as output format"
   $stderr.puts "\t -o <file>\t\twrite output to file <file>"
   $stderr.puts "\t --version\t\tprint the version"
   $stderr.puts "\t --help\t\t\tprint this help"
-  $stderr.puts "\n\t currently available types: ncurses (default), linuxdoc"
+  $stderr.puts "\n\t currently available types: ncurses (default), latex, txt"
   Kernel.exit(1)
 end
+
+
+
+################################
+# Here starts the main program #
+################################
 
 input = nil
 output = nil
@@ -1388,6 +1690,7 @@ ARGV.each_index do |i|
   else
     if ARGV[i] == '-v' or ARGV[i] == '--version' then
       printf "tpp - text presentation program %s\n", version_number
+      Kernel.exit(1)
     elsif ARGV[i] == '-h' or ARGV[i] == '--help' then
       usage
     elsif ARGV[i] == '-t' then
@@ -1399,10 +1702,10 @@ ARGV.each_index do |i|
     elsif input == nil then
       input = ARGV[i]
     end
-	if output==input then
-	  $stderr.puts "Don't use the input file name as the output filename to prevent overwrinting it. \n"
-	  Kernel.exit(1)
-	end
+    if output!=nil and output==input then
+      $stderr.puts "Don't use the input file name as the output filename to prevent overwriting it. \n"
+      Kernel.exit(1)
+    end
   end
 end
 
@@ -1413,14 +1716,24 @@ end
 ctrl = nil
 
 case type
-  when "linuxdoc"
+  when "ncurses"
+    load_ncurses
+    ctrl = InteractiveController.new(input,NcursesVisualizer)
+  when "autoplay"
+    load_ncurses
+    ctrl = AutoplayController.new(input,NcursesVisualizer)
+  when "txt"
     if output == nil then
       usage
     else
-      ctrl = LinuxdocController.new(input,output)
+      ctrl = ConversionController.new(input,output,TextVisualizer)
     end
-  when "ncurses"
-    ctrl = NcursesController.new(input)
+  when "latex"
+    if output == nil then
+      usage
+    else
+      ctrl = ConversionController.new(input,output,TextVisualizer)
+    end
 else
   usage
 end # case

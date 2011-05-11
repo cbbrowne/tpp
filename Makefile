@@ -6,7 +6,10 @@ BIN = tpp
 prefix=/usr/local
 INSPATH= $(prefix)/bin/
 DOCPATH = $(prefix)/share/doc/tpp
-MANPATH = $(prefix)/man/man1
+MANPATH = $(prefix)/share/man/man1
+
+all:
+	@echo "TPP doesn't need to be built. Run \`make install' in order to install it."
 
 install :
 	mkdir -p $(DOCPATH)	

@@ -1,15 +1,40 @@
-tpp design decisions:
+TPP design decisions:
 
-1. visualizer
+1. Visualizers
 
-The visualization of a slide is done by a visualizer. Visualization in the context of tpp
-means outputting it to an output device, e.g. a terminal via ncurses, a LaTeX source file,
-a Docbook source file, you name it. The generic TppVisualizer is the base for all visualizers.
-Look at the source which methods you need to implement if you want to write your own
-visualizer.
+The visualization of a slide is done by a visualizer. Visualization in the 
+context of TPP means outputting it to an output device, e.g. a terminal via 
+ncurses, a LaTeX source file, a Docbook source file, you name it. The generic 
+TppVisualizer is the base for all visualizers.  Look at the source which 
+methods you need to implement if you want to write your own visualizer. The 
+visualizer is also responsible for encapsulating the output device, e.g. 
+interactive visualizers (like the NcursesVisualizer) also return the user's key 
+presses.
 
-2. controller
+2. Controllers
 
-the controller handles the correct output, utilizing the parser and a visualizer. The generic
-TppVisualizer is the base for all visualizers. All controllers must implement a constructor,
-and the two methods run and close.
+The controller controls the correct program flow, utilizing the parser and a 
+visualizer. The generic TppVisualizer is the base for all visualizers. All 
+controllers must implement a constructor, and the two methods run and close.
+
+So far, three types of controllers have been implemented.
+
+2.1 InteractiveController
+
+The InteractiveController feeds the content of the page to the visualizer until
+it is told to stop. It then reads the next key press from the visualizer, and 
+runs the appropriate action.
+
+2.2 AutoplayController
+
+The AutoplayController works like the InteractiveController, with the only 
+difference that it ignores any information to stop and wait for a key press. It 
+can be used for unattended presentations.
+
+2.3 ConversionController
+
+The ConversionController is used for non-interactive, non-visual processing, 
+like converting TPP source into another file format. The "visualizer" is 
+responsible for producing the appropriate output format. Currently, it is used 
+for the TextVisualizer and the LatexVisualizer, which generate 
+text/LaTeX-beamer representations of the presentations they're fed with.
