@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-version_number = "1.3"
+version_number = "1.3.1"
 
 # Loads the ncurses-ruby module and imports "Ncurses" into the
 # current namespace. It stops the program if loading the
@@ -670,6 +670,10 @@ class NcursesVisualizer < TppVisualizer
       x = (@termwidth - l.length)/2
       @screen.move(@cur_line,x)
       @screen.addstr(l)
+      if @output or @shelloutput then
+        @screen.move(@cur_line,@termwidth - @indent - 2)
+        @screen.addstr(" |")
+      end
       @cur_line += 1
     end
   end
@@ -685,9 +689,12 @@ class NcursesVisualizer < TppVisualizer
       if @output or @shelloutput then
         @screen.addstr("| ")
       end
-      x = (@termwidth - l.length - 2)
+      x = (@termwidth - l.length - 5)
       @screen.move(@cur_line,x)
       @screen.addstr(l)
+      if @output or @shelloutput then
+        @screen.addstr(" |")
+      end
       @cur_line += 1
     end
   end
@@ -731,7 +738,8 @@ class NcursesVisualizer < TppVisualizer
   def do_beginoutput
     @screen.move(@cur_line,@indent)
     @screen.addstr(".")
-    ((@termwidth - @indent)/2).times { @screen.addstr("-") }
+    (@termwidth - @indent*2 - 2).times { @screen.addstr("-") }
+    @screen.addstr(".")
     @output = true
     @cur_line += 1
   end
@@ -739,7 +747,8 @@ class NcursesVisualizer < TppVisualizer
   def do_beginshelloutput
     @screen.move(@cur_line,@indent)
     @screen.addstr(".")
-    ((@termwidth - @indent)/2).times { @screen.addstr("-") }
+    (@termwidth - @indent*2 - 2).times { @screen.addstr("-") }
+    @screen.addstr(".")
     @shelloutput = true
     @cur_line += 1
   end
@@ -748,7 +757,8 @@ class NcursesVisualizer < TppVisualizer
     if @output then
       @screen.move(@cur_line,@indent)
       @screen.addstr("`")
-      ((@termwidth - @indent)/2).times { @screen.addstr("-") }
+      (@termwidth - @indent*2 - 2).times { @screen.addstr("-") }
+      @screen.addstr("'")
       @output = false
       @cur_line += 1
     end
@@ -785,7 +795,8 @@ class NcursesVisualizer < TppVisualizer
     if @shelloutput then
       @screen.move(@cur_line,@indent)
       @screen.addstr("`")
-      ((@termwidth - @indent)/2).times { @screen.addstr("-") }
+      (@termwidth - @indent*2 - 2).times { @screen.addstr("-") }
+      @screen.addstr("'")
       @shelloutput = false
       @cur_line += 1
     end
@@ -948,7 +959,7 @@ class NcursesVisualizer < TppVisualizer
     lines = split_lines(line,width)
     lines.each do |l|
       @screen.move(@cur_line,@indent)
-      if @output or @shelloutput then
+      if (@output or @shelloutput) and ! @slideoutput then
         @screen.addstr("| ")
       end
       if @shelloutput and (l =~ /^\$/ or l=~ /^%/ or l =~ /^#/) then # allow sh and csh style prompts
@@ -957,6 +968,10 @@ class NcursesVisualizer < TppVisualizer
         slide_text(l)
       else
         @screen.addstr(l)
+      end
+      if (@output or @shelloutput) and ! @slideoutput then
+        @screen.move(@cur_line,@termwidth - @indent - 2)
+        @screen.addstr(" |")
       end
       @cur_line += 1
     end
@@ -1279,9 +1294,10 @@ end
 # unattended presentation.
 class AutoplayController < TppController
 
-  def initialize(filename,visualizer_class)
+  def initialize(filename,secs,visualizer_class)
     @filename = filename
     @vis = visualizer_class.new
+    @seconds = secs
     @cur_page = 0
   end
 
@@ -1327,7 +1343,7 @@ class AutoplayController < TppController
         @vis.new_page
       end
 
-      Kernel.sleep(1)
+      Kernel.sleep(@seconds)
     end # loop
   end
 
@@ -1664,11 +1680,12 @@ end
 # Prints a nicely formatted usage message.
 def usage
   $stderr.puts "usage: #{$0} [-t <type> -o <file>] <file>\n"
-  $stderr.puts "\t -t <type>\t\tset filetype <type> as output format"
-  $stderr.puts "\t -o <file>\t\twrite output to file <file>"
-  $stderr.puts "\t --version\t\tprint the version"
-  $stderr.puts "\t --help\t\t\tprint this help"
-  $stderr.puts "\n\t currently available types: ncurses (default), latex, txt"
+  $stderr.puts "\t -t <type>\tset filetype <type> as output format"
+  $stderr.puts "\t -o <file>\twrite output to file <file>"
+  $stderr.puts "\t -s <seconds>\twait <seconds> seconds between slides (with -t autoplay)"
+  $stderr.puts "\t --version\tprint the version"
+  $stderr.puts "\t --help\t\tprint this help"
+  $stderr.puts "\n\t currently available types: ncurses (default), autoplay, latex, txt"
   Kernel.exit(1)
 end
 
@@ -1681,6 +1698,7 @@ end
 input = nil
 output = nil
 type = "ncurses"
+time = 1
 
 skip_next = false
 
@@ -1698,6 +1716,9 @@ ARGV.each_index do |i|
       skip_next = true
     elsif ARGV[i] == '-o' then
       output = ARGV[i+1]
+      skip_next = true
+    elsif ARGV[i] == "-s" then
+      time = ARGV[i+1].to_i
       skip_next = true
     elsif input == nil then
       input = ARGV[i]
@@ -1721,7 +1742,7 @@ case type
     ctrl = InteractiveController.new(input,NcursesVisualizer)
   when "autoplay"
     load_ncurses
-    ctrl = AutoplayController.new(input,NcursesVisualizer)
+    ctrl = AutoplayController.new(input,time,NcursesVisualizer)
   when "txt"
     if output == nil then
       usage
@@ -1732,7 +1753,7 @@ case type
     if output == nil then
       usage
     else
-      ctrl = ConversionController.new(input,output,TextVisualizer)
+      ctrl = ConversionController.new(input,output,LatexVisualizer)
     end
 else
   usage

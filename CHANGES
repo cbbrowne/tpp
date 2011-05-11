@@ -1,3 +1,9 @@
+1.3.1:
+  - added patch by Gregor Herrman to close the boxes
+  - implemented some kind of auto-advance-after-n-seconds
+  - added german translation of README, thanks
+    Thomas Winde and Frank Hofmann
+
 1.3:
   - implemented text output mode
   - implemented (working) LaTeX output mode

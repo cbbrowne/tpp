@@ -1,0 +1,216 @@
+tpp - Text - Präsentations - Programm
+=====================================
+
+Was ist tpp?
+------------
+
+Tpp steht für Text Präsentations Programm und ist ein ncurses-basierendes
+Präsentationswerkzeug. Die Präsentation kann man mit seinem Lieblingseditor
+in einem einfachen Beschreibungsformat erstellen und danach in einem xterm
+seiner Wahl - welches von ncurses unterstützt wird - vorführen. Das reicht
+von einem alten VT 100, einem Linux Framebuffer Terminal bis zum xterm.
+
+Installation
+------------
+
+Voraussetzungen:
+  * Ruby 1.8 <http://www.ruby-lang.org/>
+  * Eine aktuelle Version der ncurses-Biliothek
+  * ncurses-ruby <http://ncurses-ruby.berlios.de/>
+
+Zusätzlich:
+  * FIGlet (für die Darstellung größerer Buchstaben im Textmodus)
+
+Installation von tpp:
+
+1. Debianpaket (ttp.deb) installieren oder
+2. Mit root-Rechten make install eingeben.
+
+Anwendung von tpp
+-----------------
+
+Starten von tpp mit der Präsentationdatei, die man anzeigen möchte:
+
+$ tpp presentation.tpp
+
+Zur Steuerung von tpp sind folgende Tastenfunktionen verfügbar:
+
+Leertaste............................... nächster Eintrag innerhalb der Seite
+Leertaste, cursor-unten, cursor-rechts.. Bewegung zur nächsten Seite
+b, cursor-oben, cursor-links............ Bewegung zur vorherigen Seite
+q, Q ................................... tpp beenden
+j, J ................................... Direktsprung zur Seite
+l, L ................................... Neuladen der laufenden Datei
+s, S ................................... Sprung zur Startseite
+e, E ................................... Sprung zur letzten Seite
+c, C ................................... Start einer Kommandozeile
+?, h ................................... zeige Hilfebildschirm
+
+Auf der linken unteren Seite des Terminals steht in eckigen Klammern die 
+laufende Seitennummer und Gesamtseitenzahl. Links davon erscheint ein "*", wenn 
+das Ende der aktuellen Seite erreicht wurde. Wenn kein "*" sichtbar ist, wurde 
+die Ausgabe angehalten (durch den Befehl `---`) und kann mit der Leertaste 
+weitergeschaltet werden. Man kann so mit der Leertaste von Punkt zu Punkt die 
+gesamte Präsentation vorführen.
+
+Wenn man die Tasten 'l' (kleines L) oder 'L' drückt, wird die laufende
+Präsentation erneut aus der Datei geladen. Dies ist besonders günstig, wenn
+man eine tpp-Präsentationen erstellt und dabei eine ständige Vorschau benötigt.
+
+Schreiben einer tpp-Präsentation
+--------------------------------
+
+Das Präsentationsformat besteht aus normalen Textzeilen und speziellen
+Kommandos. Die Kommandozeilen beginnen immer mit "--", gefolgt von den
+speziellen Kommandowörtern.
+
+Die Präsentation besteht aus einer oder mehreren Seiten, die durch den Befehl
+"--newpage" getrennt werden. Vor dem ersten "--newpage"-Kommando kann eine
+Zusammenfassung für die gesamte Präsentation stehen. Hier lassen sich der Titel,
+Autor und das Datum setzen. Zusätzlich kann jede Seite der Präsentation
+benannt werden. Nach dem "--newpage"-Kommando und einem Leerzeichen wird der 
+Name der nächsten Seite angegeben, falls nicht, wird ein entsprechender Name 
+automatisch erzeugt.
+
+
+Die folgenden Kommandos sind in der Zusammenfassung erlaubt:
+
+--author ............... Setzt den Autor der Präsentation
+--title ................ Setzt den Titel der Präsentation
+--date ................. Setzt das Datum der Präsentation. Mit "today" fügt man
+   das aktuelle Datum ein. Zusätzlich kann das Datumsformat angegeben werden.
+   Es entspricht dem Format des date(1)-Befehls und ist in der man-page
+   dokumentiert (%M %T %J ist voreingestellt).
+
+--bgcolor <color> ...... Setzt die Hintergrundfarbe. Wird keine Farbe angegeben
+   (Transparenz), wird der aktuelle Hintergrund des Terminals verwendet.
+--fgcolor <color> ...... Setzt die Vordergrundfarbe (Textfarbe)
+   Gültige Farben sind white (weiß), yellow (gelb), red (rot), green (grün),
+   blue (blau), cyan (hellblau), magenta (lila), black (schwarz).
+
+--heading <heading> .... Setzt die Kopfzeile für alle Seiten. Die Kopfzeile
+   wird zentriert und fett dargestellt (wenn es das Terminal zulässt). 
+
+Innerhalb der einzelnen Seiten kann man folgende "page-local"-Befehle verwenden:
+
+--withborder ........... Darstellung mit Seitenrand
+--horline .............. Stellt eine horizontale Linie dar
+
+--header <text> ........ Fügt eine Kopfzeile ein
+--footer <text> ........ Fügt eine Fußzeile ein
+
+--color <color> ........ Setze eine neue Textfarbe (erlaubte Farben siehe oben)
+--left <text> .......... Linksbündige Textdarstellung (Voreinstellung)
+--center <text> ........ Zentrierte Textdarstellung
+--right <text> ......... Rechtsbündige Textdarstellung
+--- .................... Stoppt die Textausgabe, Fortsetzung mit Leertaste
+--sleep <seconds> ...... Stoppt die Ausgabe für <seconds> Sekunden
+
+--beginoutput .......... markiert den Anfang des gerahmten Textes
+--endoutput ............ markiert das Ende des gerahmten Textes
+--beginshelloutput ..... Setzt den Beginn der gerahmten Shellausgabe.
+   Jede Zeile, die mit einem $ beginnt, erscheint so, als wenn die Buchstaben
+   direkt eingegeben werden.
+--endshelloutput ....... Setzt das Ende der gerahmten Shellausgabe
+
+--boldon ............... Beginn Text fett
+--boldoff .............. Ende Text fett
+--revon ................ Beginn der inversen Darstellung
+--revoff ............... Ende der inversen Darstellung
+--ulon ................. Beginn Text unterstrichen
+--uloff ................ Ende Text unterstrichen
+
+--beginslideleft ....... Beginn einfliegender Text von links
+--endslideleft ......... Ende einfliegender Text von links
+--beginslideright ...... Beginn einfliegender Text von rechts
+--endslideright ........ Ende einfliegender Text von rechts
+--beginslidetop ........ Beginn einfliegender Text von oben
+--endslidetop .......... Ende einfliegender Text von oben
+--beginslidebottom ..... Beginn einfliegender Text von unten
+--endslidebottom ....... Ende einfliegender Text von unten
+
+--huge <text> .......... Der <text> wird in sehr großen Buchstaben dargestellt.
+   Das Programm FIGlet wird benutzt, um die sehr großen Buchstaben darzustellen
+--sethugefont <font> ... Wenn man den --huge Befehl und FIGlet verwendet, wird
+   mit diesem Befehl die entsprechende FIGlet Schrift ausgewählt (siehe auch
+   FIGlet man-page).
+--exec <cmd> ........... führt den in <cmd> angegebenen Befehl aus. Nützlich,
+   um z.B. einen Bildbetrachter aufzurufen
+--## <zeile> ........... Zeilen auskommentieren
+
+Beispiele
+---------
+
+Einige Beispiele, die die Funktionen von tpp demonstrieren, liegen dem 
+tpp-Programm im Unterverzeichnis examples bei.
+
+
+Optionen
+--------
+
+tpp --help
+  zeigt die Hilfe im Textmodus
+
+tpp -l output input.tpp
+  Konvertiert die tpp-Datei in eine LaTeX-Datei. Diese Funktion ist
+  derzeit in Überarbeitung.
+
+tpp --version
+  zeigt die tpp-Versionsnummer
+
+Vim-Syntax-Datei
+----------------
+
+Um die Vim-Syntax-Datei zu nutzen, muß die Datei in das Verzeichnis 
+~/.vim/syntax kopiert werden. Falls das Verzeichnis noch nicht existiert, muß
+es angelegt werden. Danach muß das folgende in die Datei ~/.vim/filetype.vim
+eingefügt werden:
+
+if exists("did_load_filetypes")
+	finish
+endif
+augroup filetype detect
+	au! BufRead,BufNewFile *.tpp  setfiletype tpp
+augroup END
+
+Falls der Vim keine Syntaxhervorhebung unterstützt, kann das mit dem Kommando
+
+syntax on
+
+aktiviert werden.
+
+Neben der Datei tpp.vim im Verzeichnis contrib existiert eine weitere, 
+verbesserte Variante, welche wir aus Lizenzgründen nicht verbreiten können. 
+Diese Datei kann unter http://www.trish.de/downloads/tpp.vim bezogen werden.
+
+Übersetzung
+-----------
+
+letzte Überarbeitung der Übersetzung April 2006
+Thomas Winde <tom@linux-tage.de>, Frank Hofmann <frank.hofmann@efho.de>
+
+Lizenz
+------
+
+################################################################################
+#                                                                              #
+#  tpp - text presentation program                                             #
+#  Copyright (C) 2004-2005, 2007  Andreas Krennmair <ak@synflood.at>,          #
+#                                 Nico Golde <nico@ngolde.de>                  #
+#                                                                              #
+#  This program is free software; you can redistribute it and/or modify        #
+#  it under the terms of the GNU General Public License as published by        #
+#  the Free Software Foundation; either version 2 of the License, or           #
+#  (at your option) any later version.                                         #
+#                                                                              #
+#  This program is distributed in the hope that it will be useful,             #
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+#  GNU General Public License for more details.                                #
+#                                                                              #
+#  You should have received a copy of the GNU General Public License           #
+#  along with this program; if not, write to the Free Software                 #
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
+#                                                                              #
+################################################################################
+
