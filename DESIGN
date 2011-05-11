@@ -1,0 +1,15 @@
+tpp design decisions:
+
+1. visualizer
+
+The visualization of a slide is done by a visualizer. Visualization in the context of tpp
+means outputting it to an output device, e.g. a terminal via ncurses, a LaTeX source file,
+a Docbook source file, you name it. The generic TppVisualizer is the base for all visualizers.
+Look at the source which methods you need to implement if you want to write your own
+visualizer.
+
+2. controller
+
+the controller handles the correct output, utilizing the parser and a visualizer. The generic
+TppVisualizer is the base for all visualizers. All controllers must implement a constructor,
+and the two methods run and close.

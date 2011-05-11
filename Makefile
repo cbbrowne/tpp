@@ -10,7 +10,7 @@ MANPATH = $(prefix)/man/man1
 
 install :
 	mkdir -p $(DOCPATH)	
-	install -m644 CHANGES COPYING README THANKS $(DOCPATH)	
+	install -m644 DESIGN CHANGES COPYING README THANKS $(DOCPATH)	
 	install -m644 doc/tpp.1 $(MANPATH)
 	install tpp.rb $(INSPATH)$(BIN)		
 	mkdir -p $(DOCPATH)/contrib

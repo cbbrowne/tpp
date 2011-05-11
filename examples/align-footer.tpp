@@ -1,5 +1,7 @@
---author Andreas Krennmair
+--author Nico Golde 
 --title Testing Orientation
+--footer and this is the footer line
+--header and this is the header line
 This is oriented left.
 ---
 --center This is centered.

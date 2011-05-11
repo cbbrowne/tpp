@@ -1,3 +1,15 @@
+1.2:
+  - heavily refactored tpp code
+  - added line wrapping
+  - added possibility of a footer and a header
+  - added LinuxDoc SGML output mode
+  - added reload feature
+  - added support for transparent terminals
+
+1.1.1:
+  - added version number command line option
+  - added support for transparent terminals
+
 1.1:
   - fixed two spelling mistakes (one reported by Michael Prokop)
   - added the possibility to set a custom format string for --date today
