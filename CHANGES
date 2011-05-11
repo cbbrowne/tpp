@@ -1,6 +1,14 @@
+1.0:
+  - added manual page
+  - fixed LaTeX converter
+  - added horizontal line feature
+  - --help option
+  - cursor keys usable from within slides
+
 0.2:
   - end-of-page notification added
   - LaTeX conversion mode added (still incomplete!)
+  - added help screen
   - support for setting colors for foreground and background added
   - added possibility to slide in text from all left, right, top and bottom
   - added possibility to show slides with border around

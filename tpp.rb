@@ -83,6 +83,10 @@ class LatexGenerator
     @title = title
     @author = author
     @date = date
+
+    @cur_item = ""
+    @itemize_open = false
+    @output = false
   end
 
   def generate_output(fn)
@@ -125,6 +129,13 @@ class LatexGenerator
   end
 
   def print_line(l)
+    if not @output then # only do substitutions when not in verbatim mode
+      l.gsub!(/_/,'\_') # needs to be escaped
+      l.gsub!(/#/,'\#') # needs to be escaped, too
+      l.gsub!(/->/,'$\rightarrow$') # a real arrow looks better than '->'
+      l.gsub!(/"/,'\'\'') # replace " so that "A really prints ''A and not Ä
+      l.gsub!(/%/,'\%') # % are LaTeX comments and must be escaped
+    end
     case l
       when /^--heading /
         heading = l.sub(/^--heading /,"")
@@ -139,10 +150,14 @@ class LatexGenerator
         # do nothing
       when /^--beginoutput/,/^--beginshelloutput/
         @fh.puts '\begin{verbatim}'
+        @output = true
       when /^--endoutput/,/--endshelloutput/
         @fh.puts '\end{verbatim}'
+        @output = false
       when /^--boldon/
         @fh.puts '{\bf '
+      when /^--horline/
+        @fh.puts '\hline '
       when /^--revon/,/^--ulon/
         @fh.puts '{\it '
       when /^--boldoff/,/^--revoff/,/^--uloff/
@@ -151,7 +166,33 @@ class LatexGenerator
         text = l.sub(/^--huge /,"")
         @fh.puts "{\\huge #{text}}"
       else
-        @fh.puts("#{l}")
+        # TODO: add better itemize handling, including multi-line items and nested items
+        if l =~ /^ *\*/ then
+          if @itemize_open then
+            @fh.puts("\\item #{@cur_item}")
+          else
+            @fh.puts('\begin{itemize}')
+            @itemize_open = true
+          end
+          @cur_item = l.sub(/^ *\*/,"")
+        elsif l =~ /^ +/ then
+          if @itemize_open then
+            if @cur_item =~ /-$/ then # hack to keep with - separated words and phrases together
+              @cur_item += l.strip
+            else
+              @cur_item += " " + l.strip
+            end
+          else
+            @fh.puts("#{l}")
+          end
+        else
+          if @itemize_open then
+            @itemize_open = false
+            @fh.puts("\\item #{@cur_item}")
+            @fh.puts('\end{itemize}')
+          end
+          @fh.puts("#{l}")
+        end
     end
   end
 
@@ -167,10 +208,13 @@ class LatexGenerator
         print_line(l)
       end
     end
+    if @itemize_open then
+      @fh.puts("\\item #{@cur_item}")
+      @fh.puts('\end{itemize}')
+      @itemize_open = false
+    end
     @fh.puts '\newpage'
   end
-
-
 end
 
 
@@ -183,7 +227,7 @@ class FileParser
     @fgcolor = "white"
   end
 
-  def do_work
+  def do_work(output_latex)
     f = File.open(@filename)
 
     if not f then
@@ -213,9 +257,11 @@ class FileParser
             @date = Time.now.strftime("%b %d %Y")
           end
         when /^--bgcolor /
-          @bgcolor = line.sub(/^--bgcolor /,"")
+          tmp_bgcolor = line.sub(/^--bgcolor /,"")
+          @bgcolor = tmp_bgcolor.strip
         when /^--fgcolor /
-          @fgcolor = line.sub(/^--fgcolor /,"")
+          tmp_fgcolor = line.sub(/^--fgcolor /,"")
+          @fgcolor = tmp_fgcolor.strip
         when /^--newpage/
           if cur_page then
             @pages << cur_page
@@ -242,12 +288,19 @@ class FileParser
     end
 
     front_page = Page.new("#{@title}")
-    fp_lines = ["--color #{@fgcolor}",
-                "--heading #{@title}",
-                "",
-                "--center #{@author}",
-                "--center #{@date}",
-                "" ]
+    if output_latex then
+      fp_lines = [] # "--title #{@title}",
+                  #"--author #{@author}",
+                  #"--date #{@date}"
+                  #]
+    else
+      fp_lines = ["--color #{@fgcolor}",
+                  "--heading #{@title}",
+                  "",
+                  "--center #{@author}",
+                  "--center #{@date}",
+                  "" ]
+    end
     abstract.each { |al| fp_lines << al }
     front_page.set_lines(fp_lines)
     @pages[0] = front_page
@@ -320,14 +373,18 @@ class Pager
     @termheight = Ncurses.getmaxy(@screen)
   end
 
-  def read_newpage
+  def read_newpage()
     page = []
     @screen.clear()
     col = 0
     line = 2
     @pages.each_index do |i|
       @screen.move(line,col*15 + 2)
-      @screen.printw("%2d %s",i+1,@pages[i].name[0..10])
+      if @current_page == i then
+        @screen.printw("%2d %s <=",i+1,@pages[i].name[0..10])
+      else  
+        @screen.printw("%2d %s",i+1,@pages[i].name[0..10])
+      end
       line += 1
       if line >= @termheight - 3 then
         line = 2
@@ -352,7 +409,7 @@ class Pager
   
   def draw_slidenum
     @screen.move(@termheight - 2, @indent)
-    # @screen.attroff(Ncurses.COLOR_PAIR(@current_color_pair))
+    #@screen.attroff(Ncurses.COLOR_PAIR(@current_color_pair))
     @screen.attroff(Ncurses::A_BOLD) # this is bad
     @screen.addstr("[slide #{@current_page+1}/#{@number_pages}]")
   end
@@ -365,23 +422,19 @@ class Pager
   end
 
   def draw_border
-    y = 1 
     @screen.move(0,0)
     @screen.addstr(".")
     (@termwidth-2).times { @screen.addstr("-") }; @screen.addstr(".")
     @screen.move(@termheight-2,0)
     @screen.addstr("`")
     (@termwidth-2).times { @screen.addstr("-") }; @screen.addstr("'")
-    while y <= @termheight-3
+    1.upto(@termheight-3) do |y|
       @screen.move(y,0)
 	  @screen.addstr("|") 
-      y += 1
     end
-    y=1 
-    while y <= @termheight-3
+    1.upto(@termheight-3) do |y|
       @screen.move(y,@termwidth-1)
 	  @screen.addstr("|") 
-      y += 1
     end
   end
 
@@ -517,8 +570,17 @@ class Pager
         when /^--withborder/
           draw_border()
           @with_border = true
+        when /^--horline/
+        @screen.attron(Ncurses::A_BOLD)
+          (@termwidth).times do |x|
+            @screen.move(@cur_line,x)
+            @screen.addstr("-") 
+          end
+        @screen.attroff(Ncurses::A_BOLD)
+        @cur_line += 1
         when /^--color /
           text = l.sub(/^--color /,"")
+          text.strip
           num = ColorMap.get_color_pair(text)
           Ncurses.attron(Ncurses.COLOR_PAIR(num))
           @current_color_pair = num
@@ -554,8 +616,14 @@ class Pager
             case x
               when ' '[0]
                 break
-              when 'q'[0], 'Q'[0], 'j'[0], 'J'[0], 's'[0], 'S'[0], 'e'[0], 'E'[0], 'c'[0], 'C'[0]
-                return x
+              when 'q'[0], 'Q'[0], 'j'[0], 'J'[0], 's'[0], 'S'[0], 'e'[0], 'E'[0], 'c'[0], 'C'[0], Ncurses::KEY_LEFT, Ncurses::KEY_RIGHT, Ncurses::KEY_UP, Ncurses::KEY_DOWN
+                if [ Ncurses::KEY_DOWN, Ncurses::KEY_RIGHT ].include?(x) then
+                  return x if not on_last_page?
+                elsif [ Ncurses::KEY_UP, Ncurses::KEY_LEFT].include?(x) then
+                  return x if not on_first_page?
+                else
+                  return x
+                end
             end # case
           end # while
           # @screen.refresh()
@@ -619,7 +687,7 @@ class Pager
         when /^--huge /
           figlet_text = l.sub(/^--huge /,"")
           output_width = @termwidth - @indent
-          output_width -= 2 if output or shelloutput
+          output_width -= 2 if @output or @shelloutput
           op = IO.popen("figlet -w #{output_width} -k \"#{figlet_text}\"","r")
           op.readlines.each do |line|
             print_line(line)
@@ -684,7 +752,7 @@ class Pager
     while true do
       if changed_page then
         x = draw_page(@pages[@current_page])
-        jump_out_chars = [ 'q'[0],'j'[0],'Q'[0],'J'[0],'e'[0],'E'[0],'s'[0],'S'[0],'c'[0],'C'[0],'?'[0] ]
+        jump_out_chars = [ 'q'[0],'j'[0],'Q'[0],'J'[0],'e'[0],'E'[0],'s'[0],'S'[0],'c'[0],'C'[0],'?'[0], Ncurses::KEY_LEFT, Ncurses::KEY_RIGHT, Ncurses::KEY_UP, Ncurses::KEY_DOWN ]
         jumped_out = true if jump_out_chars.include?(x)
         # jumped_out = true if x == 'q'[0] or x == 'j'[0] or x == 'Q'[0] or x == 'J'[0] or x == 'e'[0] or x == 'E'[0] or x == 's'[0] or x == 'S'[0] or x == 'c' or x == 'C'[0]
         draw_slidenum # draw slidenum to bring cursor down
@@ -738,7 +806,16 @@ class Pager
         when Ncurses::KEY_RESIZE # WINCH signal (ugly!)
           set_sizes
       end # case
+      @screen.refresh()
     end # while
+  end
+
+  def on_first_page?
+    @current_page == 0
+  end
+
+  def on_last_page?
+    @current_page == (@number_pages - 1)
   end
 
 end
@@ -747,7 +824,7 @@ filename = nil
 output_latex = false
 latex_filename = nil
 skip_next = false
-
+version_number = 1.0 
 ARGV.each_index do |i|
   if skip_next then
     skip_next = false
@@ -756,6 +833,8 @@ ARGV.each_index do |i|
       output_latex = true
       latex_filename = ARGV[i+1]
       skip_next = true
+    elsif ARGV[i] == "-h" or ARGV[i] == "--help" then
+      printf "tpp - text presenatation program %s\n", version_number
     elsif filename == nil then
       filename = ARGV[i]
     end
@@ -764,12 +843,14 @@ end
 
 
 if filename == nil then
-  $stderr.puts "usage: #{$0} [-l <outputfile>] <file>"
+  $stderr.puts "usage: #{$0} [options] <file>"
+  $stderr.puts "\nOptions: -l <outputfile> <file> convert presenation to latex"
+  $stderr.puts "\t --help\t\t\tprints this help"
   Kernel.exit(1)
 end
 
 parser = FileParser.new(filename)
-parser.do_work
+parser.do_work(output_latex)
 
 pages = parser.get_pages
 bgcolor = parser.get_bgcolor

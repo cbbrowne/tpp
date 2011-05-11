@@ -23,9 +23,7 @@ Optionally:
 
 Installing tpp:
 
-  Just copy tpp.rb to your favorite location, e.g. ~/bin or
-  /usr/local/bin.
-
+Just get root and type make install.
 
 Using tpp
 ---------
@@ -51,7 +49,8 @@ On the lower left side of your terminal you will notice the current slide
 number and the total number of slides. Left of that, a '*' will appear when
 pressing space bar the next time would show the next slide. If no '*' appears,
 pressing space bar the next time will show the next entry on the page
-(separated by '---').
+(separated by '---'). You are also able to go to the next/previous page at
+this point.
 
 Writing tpp presentations
 -------------------------
@@ -88,6 +87,8 @@ following page-local commands are available:
 
 --heading <heading>: draw a heading. Headings will be centered and drawn
     in bold (if supported by the terminal).
+
+--horline: draws a horizontal line in the current line
 
 --color <color>: draw the text with specified color until a new color is set
 
@@ -146,6 +147,11 @@ For a collection of examples that demonstrate the different features
 of tpp, please have a look into the examples subdirectory in the tpp
 source distribution.
 
+Options:
+--------
+
+tpp --help: displays help in text mode
+tpp -l output input.tpp: converts tpp file in tex
 
 License
 -------
@@ -153,7 +159,7 @@ License
 ########################################################################################
 #                                                                                      #
 #  tpp - text presentation program                                                     #
-#  Copyright (C) 2004  Andreas Krennmair <ak@synflood.at>, Nico Golde <nico@ngolde.de  #                  
+#  Copyright (C) 2004  Andreas Krennmair <ak@synflood.at>, Nico Golde <nico@ngolde.de> #
 #                                                                                      #
 #  This program is free software; you can redistribute it and/or modify                #
 #  it under the terms of the GNU General Public License as published by                #
