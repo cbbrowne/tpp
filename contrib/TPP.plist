@@ -63,6 +63,7 @@
 		<string>revon</string>
 		<string>revoff</string>
 		<string>withborder</string>
+		<string>sleep</string>
 		<string>-</string>
 		<string>--</string>
 		<string>&amp;</string>
