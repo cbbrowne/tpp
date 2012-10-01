@@ -196,6 +196,10 @@ Beside the tpp.vim in the contrib subdirectory, there's also another, more sophi
 version, which we unfortunately cannot distribute due to license reason. You can find
 this file at http://www.trish.de/downloads/tpp.vim
 
+OSX TextWrangler/BBEdit syntax file
+-----------------------------------
+To use the TextWrangler syntax file you have to copy the TPP.plist file into ~/Library/Application Support/TextWrangler/Language Modules/.
+
 License
 -------
 
