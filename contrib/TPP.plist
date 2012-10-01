@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<!--
+        TextWrangler codeless language module for TPP files.
+        To install, copy here:
+       
+                ~/Library/Application Support/TextWrangler/Language Modules/
+       
+        and relaunch TextWrangler.
+-->
+<dict>
+	<key>BBEditDocumentType</key>
+	<string>CodelessLanguageModule</string>
+	<key>BBLMColorsSyntax</key>
+	<true/>
+	<key>BBLMIsCaseSensitive</key>
+	<true/>
+	<key>BBLMKeywordList</key>
+	<array>
+		<string>author</string>
+		<string>title</string>
+		<string>date</string>
+		<string>footer</string>
+		<string>heading</string>
+		<string>center</string>
+		<string>right</string>
+		<string>sethugefont</string>
+		<string>huge</string>
+		<string>exec</string>
+		<string>newpage</string>			
+		<string>white</string>
+		<string>yellow</string>
+		<string>red</string>
+		<string>white</string>
+		<string>green</string>
+		<string>blue</string>
+		<string>cyan</string>
+		<string>magenta</string>
+		<string>black</string>
+		<string>default</string>
+		<string>date</string>
+		<string>bgcolor</string>
+		<string>fgcolor</string>
+		<string>boldon</string>
+		<string>boldoff</string>
+		<string>ulon</string>
+		<string>uloff</string>
+		<string>horline</string>
+		<string>beginshelloutput</string>
+		<string>endshelloutput</string>
+		<string>beginslideleft</string>
+		<string>endslideleft</string>
+		<string>color</string>
+		<string>beginoutput</string>
+		<string>endoutput</string>
+		<string>beginslideright</string>
+		<string>endslideright</string>
+		<string>beginslidetop</string>
+		<string>endslidetop</string>
+		<string>beginslidebottom</string>
+		<string>endslidebottom</string>
+		<string>revon</string>
+		<string>revoff</string>
+		<string>withborder</string>
+		<string>-</string>
+		<string>--</string>
+		<string>&amp;</string>
+	</array>
+	<key>BBLMLanguageCode</key>
+	<string>TPP</string>
+	<key>BBLMLanguageDisplayName</key>
+	<string>TPP</string>
+	<key>BBLMScansFunctions</key>
+	<true/>
+	<key>BBLMSuffixMap</key>
+	<array>
+		<dict>
+			<key>BBLMLanguageSuffix</key>
+			<string>.tpp</string>
+		</dict>
+		<dict>	
+			<key>BBLMLanguageSuffix</key>
+			<string>.TPP</string>
+		</dict>
+	</array>
+	<key>Language Features</key>
+	<dict>
+		<key>Close horline</key>
+		<string>end</string>
+		<key>Close bond</key>
+		<string>boldoff</string>
+		<key>Close list</key>
+		<string>uloff</string>
+		<key>Close output</key>
+		<string>endoutput</string>
+		<key>end shell</key>
+		<string>endshellouput</string>
+		<key>Identifier and Keyword Characters</key>
+		<string>123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz.</string>
+		<key>Begin horline</key>
+		<string>begin</string>
+		<key>Begin bond</key>
+		<string>boldon</string>
+		<key>Open list</key>
+		<string>ulon</string>
+		<key>Begin output</key>
+		<string>beginoutput</string>
+		<key>begin shell</key>
+		<string>beginshellouput</string>
+		<key>Comment Pattern</key>
+		<string>(?x:
+			(?&gt;	\(	                                    )	|
+			(?&gt;	\-	                                    )	|
+			(?&gt;	\)                                      )	|
+			(?&gt;	\[	                                    )	|
+			(?&gt;	\]	                                    )	|
+			(?&gt;	\{	                                    )	|
+			(?&gt;	\}	                                    )	|
+			(?&gt;	\http	                                )	|
+			(?&gt;	\:	                                    )	|
+			(?&gt;	\@	                                    )	|
+			(?&gt;	-&gt;	                                )	|
+			(?&gt;	\#		.*			$				    )   |
+			(?&gt;	\-\-\-		.*			$				)   |
+			(?&gt;	\#\#	(?s:.*?)	(?: \#\# | \z ))
+		)</string>
+		<key>Open Line Comments</key>
+        <string>--</string>
+	</dict>
+</dict>
+</plist>
