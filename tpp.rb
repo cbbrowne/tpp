@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-
+require 'io/console'
 version_number = "1.3.1"
 
 # Loads the ncurses-ruby module and imports "Ncurses" into the
@@ -511,20 +511,24 @@ class NcursesVisualizer < TppVisualizer
   end
 
   def get_key
-    ch = @screen.getch
+    ch = STDIN.getch
     case ch
-      when Ncurses::KEY_RIGHT
+      when 'd'#Ncurses::KEY_RIGHT
         return :keyright
-      when Ncurses::KEY_DOWN
+      when 's'
         return :keydown
-      when Ncurses::KEY_LEFT
+      when 'a'#Ncurses::KEY_LEFT
         return :keyleft
-      when Ncurses::KEY_UP
+      when 'w'
         return :keyup
-      when Ncurses::KEY_RESIZE
+      when 'z'
         return :keyresize
-      else
+      when 'r','e','s','j','l','c','h','q','b'
         return ch
+ 
+      else
+        return :keyright
+        # return ch
       end
   end
 
@@ -1396,17 +1400,17 @@ class InteractiveController < TppController
       loop do
         ch = @vis.get_key
         case ch
-          when 'q'[0], 'Q'[0] # 'Q'uit
+          when 'q'#[0], 'Q'[0] # 'Q'uit
             return
-          when 'r'[0], 'R'[0] # 'R'edraw slide
+          when 'r'# 'R'edraw slide
             changed_page = true # @todo: actually implement redraw
-          when 'e'[0], 'E'[0]
+          when 'e', 'E'[0]
             @cur_page = @pages.size - 1
             break
-          when 's'[0], 'S'[0]
+          when 's', 'S'[0]
             @cur_page = 0
             break
-          when 'j'[0], 'J'[0] # 'J'ump to slide
+          when 'j', 'J'[0] # 'J'ump to slide
             screen = @vis.store_screen
             p = @vis.read_newpage(@pages,@cur_page)
             if p >= 0 and p < @pages.size
@@ -1417,15 +1421,15 @@ class InteractiveController < TppController
               @vis.restore_screen(screen)
             end
             break
-          when 'l'[0], 'L'[0] # re'l'oad current file
+          when 'l', 'L'[0] # re'l'oad current file
             @reload_file = true
             return
-          when 'c'[0], 'C'[0] # command prompt
+          when 'c', 'C'[0] # command prompt
             screen = @vis.store_screen
             @vis.do_command_prompt
             @vis.clear
             @vis.restore_screen(screen)
-          when '?'[0], 'h'[0]
+          when '?'[0], 'h'
             screen = @vis.store_screen
             @vis.show_help_page
             ch = @vis.get_key
@@ -1438,7 +1442,7 @@ class InteractiveController < TppController
               @vis.new_page
             end
             break
-          when 'b'[0], 'B'[0], :keyleft, :keyup
+          when 'b', 'B'[0], :keyleft, :keyup
             if @cur_page > 0 then
               @cur_page -= 1
               @pages[@cur_page].reset_eop
