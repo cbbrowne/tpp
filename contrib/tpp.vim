@@ -24,7 +24,7 @@ endif
 
 
 "" list of the legal switches/options
-syn match tppAbstractOptionKey contained "^--\%(author\|title\|date\|footer\) *" nextgroup=tppString
+syn match tppAbstractOptionKey contained "^--\%(author\|title\|date\|footer\|header\) *" nextgroup=tppString
 syn match tppPageLocalOptionKey contained "^--\%(heading\|center\|right\|huge\|sethugefont\|exec\) *" nextgroup=tppString
 syn match tppPageLocalSwitchKey contained "^--\%(horline\|-\|\%(begin\|end\)\%(\%(shell\)\?output\|slide\%(left\|right\|top\|bottom\)\)\|\%(bold\|rev\|ul\)\%(on\|off\)\|withborder\)"
 syn match tppNewPageOptionKey contained "^--newpage *" nextgroup=tppString
