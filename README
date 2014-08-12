@@ -118,7 +118,7 @@ following page-local commands are available:
 
 --beginshelloutput: marks the beginning of a framed shell output. The
     difference between normal output and shell output is that lines that
-    start with $ are printed as if they were typed by a person.
+    start with $,%, or # are printed as if they were typed by a person.
 
 --endshelloutput: marks the end of a shell output
 
@@ -156,6 +156,9 @@ following page-local commands are available:
 
 --beginslidebottom: starts the "slide in from the bottom" mode
 --endslidebottom: ends the "slide in from the bottom" mode
+
+$$ cmd : append the stdout of executing cmd in the shell
+$% cmd : append the stdout of executing cmd in the shell with % at the beggining of every line(useful with --beginshelloutput).
 
 You can comment lines using --##
 
