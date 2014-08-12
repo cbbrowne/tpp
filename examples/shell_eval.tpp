@@ -1,5 +1,5 @@
---author Andreas Krennmair
---title A simple example
+--author Gabriel Rea
+--title An example of shell evaluation
 --date today
 
 
