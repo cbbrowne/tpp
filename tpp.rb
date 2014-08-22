@@ -109,6 +109,21 @@ class Page
   # Appends a line to the page, but only if _line_ is not null
   def add_line(line)
     @lines << line if line
+    if line =~ /^\$\$/ or line =~ /^\$\%/
+      prefix = ''
+      prefix = '%' if line =~ /^\$\%/
+
+      cmd = line[2..-1]
+      begin
+        op = IO.popen(cmd,"r")
+        op.readlines.each do |out_line|
+          @lines << prefix + out_line
+        end
+        op.close
+      rescue => e
+        @lines << e.to_s
+      end
+    end
   end
 
   # Returns the next line. In case the last line is hit, then the end-of-page marker is set.
