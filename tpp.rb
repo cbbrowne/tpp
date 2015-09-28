@@ -1778,5 +1778,8 @@ else
   usage
 end # case
 
-ctrl.run
-ctrl.close
+begin
+  ctrl.run
+ensure
+  ctrl.close
+end
