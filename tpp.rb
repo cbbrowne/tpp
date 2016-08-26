@@ -544,7 +544,7 @@ class NcursesVisualizer < TppVisualizer
       else
         return :keyright
         # return ch
-      end
+    end
   end
 
   def clear
@@ -601,7 +601,7 @@ class NcursesVisualizer < TppVisualizer
             @screen.refresh
           end
           return
-		when Ncurses::KEY_LEFT
+        when Ncurses::KEY_LEFT
           cursor_pos = [0, cursor_pos-1].max # jump one character to the left
         when Ncurses::KEY_RIGHT
           cursor_pos = [0, cursor_pos+1].max # jump one character to the right
@@ -798,7 +798,7 @@ class NcursesVisualizer < TppVisualizer
  def do_header(header_txt)
     @screen.move(@termheight - @termheight+1, (@termwidth - header_txt.length)/2)
     @screen.addstr(header_txt)
-  end
+ end
 
   def do_author(author)
     do_center(author)
@@ -1047,12 +1047,12 @@ class NcursesVisualizer < TppVisualizer
     @screen.move(@termheight - 2, @indent)
     @screen.attroff(Ncurses::A_BOLD) # this is bad
     @screen.addstr("[slide #{cur_page}/#{max_pages}]")
-	if @footer_txt.to_s.length > 0 then
-	  do_footer(@footer_txt)
-	end
-	if @header_txt.to_s.length > 0 then
-	  do_header(@header_txt)
-	end
+    if @footer_txt.to_s.length > 0 then
+      do_footer(@footer_txt)
+    end
+    if @header_txt.to_s.length > 0 then
+      do_header(@header_txt)
+    end
 
     if eop then
       draw_eop_marker
