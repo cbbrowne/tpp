@@ -526,24 +526,53 @@ class NcursesVisualizer < TppVisualizer
   end
 
   def get_key
-    ch = STDIN.getch
+    ch = Ncurses.getch
     case ch
-      when 'd'#Ncurses::KEY_RIGHT
+      when 100, #d
+        68, #D
+        Ncurses::KEY_DOWN,
+        Ncurses::KEY_RIGHT
         return :keyright
-      when 's'
-        return :keydown
-      when 'a'#Ncurses::KEY_LEFT
+      when 97, #a
+        65, #A
+        98, #b
+        66, #B
+        Ncurses::KEY_UP,
+        Ncurses::KEY_LEFT
         return :keyleft
-      when 'w'
-        return :keyup
-      when 'z'
+      when 122, #z
+        90 #Z
         return :keyresize
-      when 'r','e','s','j','l','c','h','q','b'
-        return ch
+      # @todo implement redraw
+      #when 114, #r
+        #82 #R
+        #return :redraw
+      when 113, #q
+        81 #Q
+        return :quit
+      when 115, #s
+        83 #S
+        return :firstpage
+      when 101, #e
+        69 #E
+        return :lastpage
+      when 106, #j
+        74 #J
+        return :jumptoslide
+      when 108, #l
+        76 #L
+        return :reload
+      # @todo fix command prompt
+      #when 99, #c
+        #67 #C
+        #return :command_prompt
+      when 104, #h
+        72, #H
+        63 #?
+        return :help
 
       else
         return :keyright
-        # return ch
     end
   end
 
@@ -1414,17 +1443,17 @@ class InteractiveController < TppController
       loop do
         ch = @vis.get_key
         case ch
-          when 'q'#[0], 'Q'[0] # 'Q'uit
+          when :quit
             return
-          when 'r'# 'R'edraw slide
-            changed_page = true # @todo: actually implement redraw
-          when 'e', 'E'[0]
+          when :redraw
+            # @todo: actually implement redraw
+          when :lastpage
             @cur_page = @pages.size - 1
             break
-          when 's', 'S'[0]
+          when :firstpage
             @cur_page = 0
             break
-          when 'j', 'J'[0] # 'J'ump to slide
+          when :jumptoslide
             screen = @vis.store_screen
             p = @vis.read_newpage(@pages,@cur_page)
             if p >= 0 and p < @pages.size
@@ -1435,28 +1464,28 @@ class InteractiveController < TppController
               @vis.restore_screen(screen)
             end
             break
-          when 'l', 'L'[0] # re'l'oad current file
+          when :reload
             @reload_file = true
             return
-          when 'c', 'C'[0] # command prompt
+          when :command_prompt
             screen = @vis.store_screen
             @vis.do_command_prompt
             @vis.clear
             @vis.restore_screen(screen)
-          when '?'[0], 'h'
+          when :help
             screen = @vis.store_screen
             @vis.show_help_page
             ch = @vis.get_key
             @vis.clear
             @vis.restore_screen(screen)
-          when :keyright, :keydown, ' '[0]
+          when :keyright
             if @cur_page + 1 < @pages.size and eop then
               @cur_page += 1
               @pages[@cur_page].reset_eop
               @vis.new_page
             end
             break
-          when 'b', 'B'[0], :keyleft, :keyup
+          when :keyleft
             if @cur_page > 0 then
               @cur_page -= 1
               @pages[@cur_page].reset_eop
