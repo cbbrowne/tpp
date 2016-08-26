@@ -562,10 +562,9 @@ class NcursesVisualizer < TppVisualizer
       when 108, #l
         76 #L
         return :reload
-      # @todo fix command prompt
-      #when 99, #c
-        #67 #C
-        #return :command_prompt
+      when 99, #c
+        67 #C
+        return :command_prompt
       when 104, #h
         72, #H
         63 #?
@@ -606,17 +605,17 @@ class NcursesVisualizer < TppVisualizer
     Ncurses.overwrite(window,@screen) # overwrite @screen with window
     Ncurses.curs_set(1)
     Ncurses.echo
-    window.move(@termheight/4,1)
-    window.clrtoeol()
-    window.clrtobot()
-    window.mvaddstr(@termheight/4,1,prompt) # add the prompt string
+    @screen.move(@termheight/4,1)
+    @screen.clrtoeol()
+    @screen.clrtobot()
+    @screen.mvaddstr(@termheight/4,1,prompt) # add the prompt string
 
     loop do
-      window.mvaddstr(@termheight/4,1+prompt.length,string) # add the code
-      window.move(@termheight/4,1+prompt.length+cursor_pos) # move cursor to the end of code
-      ch = window.getch
+      @screen.mvaddstr(@termheight/4,1+prompt.length,string) # add the code
+      @screen.move(@termheight/4,1+prompt.length+cursor_pos) # move cursor to the end of code
+      ch = Ncurses.getch
       case ch
-        when Ncurses::KEY_ENTER, ?\n, ?\r
+        when Ncurses::KEY_ENTER, 10, ?\n, ?\r
           Ncurses.curs_set(0)
           Ncurses.noecho
           rc = Kernel.system(string)
@@ -637,8 +636,8 @@ class NcursesVisualizer < TppVisualizer
         when Ncurses::KEY_BACKSPACE
           string = string[0...([0, cursor_pos-1].max)] + string[cursor_pos..-1]
           cursor_pos = [0, cursor_pos-1].max
-          window.mvaddstr(@termheight/4, 1+prompt.length+string.length, " ")
-        when " "[0]..255
+          @screen.mvaddstr(@termheight/4, 1+prompt.length+string.length, " ")
+        when 0..255
           if (cursor_pos < max_len)
             string[cursor_pos,0] = ch.chr
             cursor_pos += 1
