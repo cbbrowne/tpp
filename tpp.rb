@@ -942,7 +942,6 @@ class NcursesVisualizer < TppVisualizer
       (@termwidth - @indent).times do |pos|
         @screen.move(@cur_line,@termwidth - pos - 1)
         @screen.clrtoeol()
-        maxpos = (pos >= l.length-1) ? l.length-1 : pos
         @screen.addstr(l[0..pos])
         @screen.refresh()
         time_to_sleep = 1.to_f / 20
