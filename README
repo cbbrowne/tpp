@@ -36,7 +36,6 @@ $ tpp presentation.tpp
 
 To control tpp, the following keys are available:
 
-space bar .............................. display next entry within page
 space bar, cursor-down, cursor-right ... display next page
 b, cursor-up, cursor-left .............. display previous page
 q, Q ................................... quit tpp
