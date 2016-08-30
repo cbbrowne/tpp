@@ -70,7 +70,7 @@ class FileParser
 
     number_pages = 0
 
-    cur_page = Page.new("slide " + (number_pages + 1).to_s)
+    cur_page = Page.new("Title")
 
     f.each_line do |line|
       line.chomp!
