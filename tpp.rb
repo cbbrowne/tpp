@@ -44,7 +44,7 @@ class ColorMap
                "blue" => 5,
                "cyan" => 6,
                "magenta" => 7,
-               "black" => 8, 
+               "black" => 8,
                "default" =>-1}
     colors[color]
   end
@@ -95,7 +95,7 @@ class FileParser
 end # class FileParser
 
 
-# Represents a page (aka `slide') in TPP. A page consists of a title and one or 
+# Represents a page (aka `slide') in TPP. A page consists of a title and one or
 # more lines.
 class Page
 
@@ -160,8 +160,8 @@ end
 
 
 
-# Implements a generic visualizer from which all other visualizers need to be 
-# derived. If Ruby supported abstract methods, all the do_* methods would be 
+# Implements a generic visualizer from which all other visualizers need to be
+# derived. If Ruby supported abstract methods, all the do_* methods would be
 # abstract.
 class TppVisualizer
 
@@ -169,8 +169,8 @@ class TppVisualizer
     # nothing
   end
 
-  # Splits a line into several lines, where each of the result lines is at most 
-  # _width_ characters long, caring about word boundaries, and returns an array 
+  # Splits a line into several lines, where each of the result lines is at most
+  # _width_ characters long, caring about word boundaries, and returns an array
   # of strings.
   def split_lines(text,width)
     lines = []
@@ -205,13 +205,13 @@ class TppVisualizer
     $stderr.puts "Error: TppVisualizer#do_footer has been called directly."
     Kernel.exit(1)
   end
-  
+
   def do_header(header_text)
     $stderr.puts "Error: TppVisualizer#do_header has been called directly."
     Kernel.exit(1)
   end
 
-    
+
   def do_refresh
     $stderr.puts "Error: TppVisualizer#do_refresh has been called directly."
     Kernel.exit(1)
@@ -331,7 +331,7 @@ class TppVisualizer
     $stderr.puts "Error: TppVisualizer#do_command_prompt has been called directly."
     Kernel.exit(1)
   end
-  
+
   def do_beginslideright
     $stderr.puts "Error: TppVisualizer#do_beginslideright has been called directly."
     Kernel.exit(1)
@@ -392,7 +392,7 @@ class TppVisualizer
     Kernel.exit(1)
   end
 
-  # Receives a _line_, parses it if necessary, and dispatches it 
+  # Receives a _line_, parses it if necessary, and dispatches it
   # to the correct method which then does the correct processing.
   # It returns whether the controller shall wait for input.
   def visualize(line,eop)
@@ -461,10 +461,10 @@ class TppVisualizer
         do_huge(figlet_text)
       when /^--footer /
         @footer_txt = line.sub(/^--footer /,"")
-        do_footer(@footer_txt) 
+        do_footer(@footer_txt)
       when /^--header /
         @header_txt = line.sub(/^--header /,"")
-        do_header(@header_txt) 
+        do_header(@header_txt)
       when /^--title /
         title = line.sub(/^--title /,"")
         do_title(title)
@@ -526,25 +526,53 @@ class NcursesVisualizer < TppVisualizer
   end
 
   def get_key
-    ch = STDIN.getch
+    ch = Ncurses.getch
     case ch
-      when 'd'#Ncurses::KEY_RIGHT
+      when 100, #d
+        68, #D
+        Ncurses::KEY_DOWN,
+        Ncurses::KEY_RIGHT
         return :keyright
-      when 's'
-        return :keydown
-      when 'a'#Ncurses::KEY_LEFT
+      when 97, #a
+        65, #A
+        98, #b
+        66, #B
+        Ncurses::KEY_UP,
+        Ncurses::KEY_LEFT
         return :keyleft
-      when 'w'
-        return :keyup
-      when 'z'
+      when 122, #z
+        90 #Z
         return :keyresize
-      when 'r','e','s','j','l','c','h','q','b'
-        return ch
- 
+      # @todo implement redraw
+      #when 114, #r
+        #82 #R
+        #return :redraw
+      when 113, #q
+        81 #Q
+        return :quit
+      when 115, #s
+        83 #S
+        return :firstpage
+      when 101, #e
+        69 #E
+        return :lastpage
+      when 106, #j
+        74 #J
+        return :jumptoslide
+      when 108, #l
+        76 #L
+        return :reload
+      when 99, #c
+        67 #C
+        return :command_prompt
+      when 104, #h
+        72, #H
+        63 #?
+        return :help
+
       else
         return :keyright
-        # return ch
-      end
+    end
   end
 
   def clear
@@ -566,7 +594,7 @@ class NcursesVisualizer < TppVisualizer
     @withborder = true
     draw_border
   end
-  
+
   def do_command_prompt()
     message = "Press any key to continue :)"
     cursor_pos = 0
@@ -577,17 +605,17 @@ class NcursesVisualizer < TppVisualizer
     Ncurses.overwrite(window,@screen) # overwrite @screen with window
     Ncurses.curs_set(1)
     Ncurses.echo
-    window.move(@termheight/4,1)
-    window.clrtoeol()
-    window.clrtobot()
-    window.mvaddstr(@termheight/4,1,prompt) # add the prompt string
+    @screen.move(@termheight/4,1)
+    @screen.clrtoeol()
+    @screen.clrtobot()
+    @screen.mvaddstr(@termheight/4,1,prompt) # add the prompt string
 
     loop do
-      window.mvaddstr(@termheight/4,1+prompt.length,string) # add the code
-      window.move(@termheight/4,1+prompt.length+cursor_pos) # move cursor to the end of code
-      ch = window.getch
+      @screen.mvaddstr(@termheight/4,1+prompt.length,string) # add the code
+      @screen.move(@termheight/4,1+prompt.length+cursor_pos) # move cursor to the end of code
+      ch = Ncurses.getch
       case ch
-        when Ncurses::KEY_ENTER, ?\n, ?\r
+        when Ncurses::KEY_ENTER, 10, ?\n, ?\r
           Ncurses.curs_set(0)
           Ncurses.noecho
           rc = Kernel.system(string)
@@ -601,15 +629,15 @@ class NcursesVisualizer < TppVisualizer
             @screen.refresh
           end
           return
-		when Ncurses::KEY_LEFT
+        when Ncurses::KEY_LEFT
           cursor_pos = [0, cursor_pos-1].max # jump one character to the left
         when Ncurses::KEY_RIGHT
           cursor_pos = [0, cursor_pos+1].max # jump one character to the right
         when Ncurses::KEY_BACKSPACE
           string = string[0...([0, cursor_pos-1].max)] + string[cursor_pos..-1]
           cursor_pos = [0, cursor_pos-1].max
-          window.mvaddstr(@termheight/4, 1+prompt.length+string.length, " ")
-        when " "[0]..255
+          @screen.mvaddstr(@termheight/4, 1+prompt.length+string.length, " ")
+        when 0..255
           if (cursor_pos < max_len)
             string[cursor_pos,0] = ch.chr
             cursor_pos += 1
@@ -633,11 +661,11 @@ class NcursesVisualizer < TppVisualizer
     (@termwidth-2).times { @screen.addstr("-") }; @screen.addstr("'")
     1.upto(@termheight-3) do |y|
       @screen.move(y,0)
-      @screen.addstr("|") 
+      @screen.addstr("|")
     end
     1.upto(@termheight-3) do |y|
       @screen.move(y,@termwidth-1)
-      @screen.addstr("|") 
+      @screen.addstr("|")
     end
   end
 
@@ -719,7 +747,7 @@ class NcursesVisualizer < TppVisualizer
   end
 
   def show_help_page
-    help_text = [ "tpp help", 
+    help_text = [ "tpp help",
                   "",
                   "space bar ............................... display next entry within page",
                   "space bar, cursor-down, cursor-right .... display next page",
@@ -794,11 +822,11 @@ class NcursesVisualizer < TppVisualizer
     @screen.move(@termheight - 3, (@termwidth - footer_txt.length)/2)
     @screen.addstr(footer_txt)
   end
- 
+
  def do_header(header_txt)
     @screen.move(@termheight - @termheight+1, (@termwidth - header_txt.length)/2)
     @screen.addstr(header_txt)
-  end
+ end
 
   def do_author(author)
     do_center(author)
@@ -937,12 +965,11 @@ class NcursesVisualizer < TppVisualizer
         time_to_sleep = 1.to_f / 20
         Kernel.sleep(time_to_sleep)
         xcount -= 1
-      end  
+      end
     when "right"
       (@termwidth - @indent).times do |pos|
         @screen.move(@cur_line,@termwidth - pos - 1)
         @screen.clrtoeol()
-        maxpos = (pos >= l.length-1) ? l.length-1 : pos
         @screen.addstr(l[0..pos])
         @screen.refresh()
         time_to_sleep = 1.to_f / 20
@@ -1010,7 +1037,7 @@ class NcursesVisualizer < TppVisualizer
       @screen.move(line,col*15 + 2)
       if current_page == i then
         @screen.printw("%2d %s <=",i+1,pages[i].title[0..80])
-      else  
+      else
         @screen.printw("%2d %s",i+1,pages[i].title[0..80])
       end
       line += 1
@@ -1047,12 +1074,12 @@ class NcursesVisualizer < TppVisualizer
     @screen.move(@termheight - 2, @indent)
     @screen.attroff(Ncurses::A_BOLD) # this is bad
     @screen.addstr("[slide #{cur_page}/#{max_pages}]")
-	if @footer_txt.to_s.length > 0 then
-	  do_footer(@footer_txt)
-	end
-	if @header_txt.to_s.length > 0 then
-	  do_header(@header_txt)
-	end
+    if @footer_txt.to_s.length > 0 then
+      do_footer(@footer_txt)
+    end
+    if @header_txt.to_s.length > 0 then
+      do_header(@header_txt)
+    end
 
     if eop then
       draw_eop_marker
@@ -1111,7 +1138,7 @@ class LatexVisualizer < TppVisualizer
 
   def do_footer(footer_text)
   end
-  
+
   def do_header(header_text)
   end
 
@@ -1185,7 +1212,7 @@ class LatexVisualizer < TppVisualizer
 
   def do_revon
   end
- 
+
   def do_command_prompt
   end
   def do_revoff
@@ -1202,7 +1229,7 @@ class LatexVisualizer < TppVisualizer
 
   def do_endslide
   end
-  
+
   def do_beginslideright
   end
 
@@ -1368,7 +1395,7 @@ class AutoplayController < TppController
 
 end
 
-# Implements an interactive controller which feeds the visualizer until it is 
+# Implements an interactive controller which feeds the visualizer until it is
 # told to stop, and then reads a key press and executes the appropiate action.
 class InteractiveController < TppController
 
@@ -1415,17 +1442,17 @@ class InteractiveController < TppController
       loop do
         ch = @vis.get_key
         case ch
-          when 'q'#[0], 'Q'[0] # 'Q'uit
+          when :quit
             return
-          when 'r'# 'R'edraw slide
-            changed_page = true # @todo: actually implement redraw
-          when 'e', 'E'[0]
+          when :redraw
+            # @todo: actually implement redraw
+          when :lastpage
             @cur_page = @pages.size - 1
             break
-          when 's', 'S'[0]
+          when :firstpage
             @cur_page = 0
             break
-          when 'j', 'J'[0] # 'J'ump to slide
+          when :jumptoslide
             screen = @vis.store_screen
             p = @vis.read_newpage(@pages,@cur_page)
             if p >= 0 and p < @pages.size
@@ -1436,28 +1463,28 @@ class InteractiveController < TppController
               @vis.restore_screen(screen)
             end
             break
-          when 'l', 'L'[0] # re'l'oad current file
+          when :reload
             @reload_file = true
             return
-          when 'c', 'C'[0] # command prompt
+          when :command_prompt
             screen = @vis.store_screen
             @vis.do_command_prompt
             @vis.clear
             @vis.restore_screen(screen)
-          when '?'[0], 'h'
+          when :help
             screen = @vis.store_screen
             @vis.show_help_page
             ch = @vis.get_key
             @vis.clear
             @vis.restore_screen(screen)
-          when :keyright, :keydown, ' '[0]
+          when :keyright
             if @cur_page + 1 < @pages.size and eop then
               @cur_page += 1
               @pages[@cur_page].reset_eop
               @vis.new_page
             end
             break
-          when 'b', 'B'[0], :keyleft, :keyup
+          when :keyleft
             if @cur_page > 0 then
               @cur_page -= 1
               @pages[@cur_page].reset_eop
@@ -1474,7 +1501,7 @@ class InteractiveController < TppController
 end
 
 
-# Implements a visualizer which converts TPP source to a nicely formatted text 
+# Implements a visualizer which converts TPP source to a nicely formatted text
 # file which can e.g. be used as handout.
 class TextVisualizer < TppVisualizer
 
@@ -1494,7 +1521,7 @@ class TextVisualizer < TppVisualizer
 
   def do_footer(footer_text)
   end
-  
+
   def do_header(header_text)
   end
 
@@ -1558,7 +1585,7 @@ class TextVisualizer < TppVisualizer
 
   def do_revon
   end
- 
+
   def do_command_prompt
   end
   def do_revoff
@@ -1575,7 +1602,7 @@ class TextVisualizer < TppVisualizer
 
   def do_endslide
   end
-  
+
   def do_beginslideright
   end
 
@@ -1669,8 +1696,8 @@ class TextVisualizer < TppVisualizer
 
 end
 
-# Implements a non-interactive controller to control non-interactive 
-# visualizers (i.e. those that are used for converting TPP source code into 
+# Implements a non-interactive controller to control non-interactive
+# visualizers (i.e. those that are used for converting TPP source code into
 # another format)
 class ConversionController < TppController
 
