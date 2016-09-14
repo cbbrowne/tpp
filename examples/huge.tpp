@@ -2,7 +2,7 @@
 --title Huge Text
 --newpage asdf
 --huge Test!
---newpage jklö
+--newpage jklÃ¶
 --huge Text!
 --newpage qwertz
 --huge Abrakadabra!

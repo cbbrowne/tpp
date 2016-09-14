@@ -11,12 +11,12 @@ Das ist der Slide-Right-Test
 --endslideright
 --newpage
 --heading jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj
-asdf jklö asdf jklö asdf jklö
-asdf jklö asdf jklö asdf jklö
-asdf jklö asdf jklö asdf jklö
-asdf jklö asdf jklö asdf jklö
-asdf jklö asdf jklö asdf jklö
-asdf jklö asdf jklö asdf jklö
+asdf jklÃ¶ asdf jklÃ¶ asdf jklÃ¶
+asdf jklÃ¶ asdf jklÃ¶ asdf jklÃ¶
+asdf jklÃ¶ asdf jklÃ¶ asdf jklÃ¶
+asdf jklÃ¶ asdf jklÃ¶ asdf jklÃ¶
+asdf jklÃ¶ asdf jklÃ¶ asdf jklÃ¶
+asdf jklÃ¶ asdf jklÃ¶ asdf jklÃ¶
 
 --beginslidetop
 * Testtesttesttest

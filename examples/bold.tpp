@@ -13,11 +13,11 @@ This should be normal.
 
 jjjjjjjjjjjjjjjjjjjjjjjjjjj
 --revon
-asdf jklö
+asdf jklÃ¶
 --boldon
-asdf jklö
+asdf jklÃ¶
 --boldoff
-asdf jklö
+asdf jklÃ¶
 --revoff
 jjjjjjjjjjjjjjjjjjjjjjjjjjj
 --newpage

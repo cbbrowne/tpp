@@ -30,15 +30,15 @@
 
 
 
-- Gr¸nde f¸r die Erstellung von Paketen
+- Gr√ºnde f√ºr die Erstellung von Paketen
 
-- Benˆtigte Software
+- Ben√∂tigte Software
 
 - Vorbereitung 
 
 - Debian-Pakete 
 
-- Erstellung benˆtigter Dateien
+- Erstellung ben√∂tigter Dateien
 
 - Konfiguration
 
@@ -46,8 +46,8 @@
 
 - Testen des Pakets
 
-- Verˆffentlichung:
-  Wie mache ich das Paket verf¸gbar?
+- Ver√∂ffentlichung:
+  Wie mache ich das Paket verf√ºgbar?
 
 - Weitere Informationen
 
@@ -68,18 +68,18 @@
 
 - Ziel: Offizieller Maintainer
 
-- "NEU!"  Das Programm war bisher nicht als Debian-Paket verf¸gbar
+- "NEU!"  Das Programm war bisher nicht als Debian-Paket verf√ºgbar
 
 - Erweiterung vorhandener Pakete, zB durch patches
-  oder zus‰tzliche Konfigurationsdateien
+  oder zus√§tzliche Konfigurationsdateien
 
 - Cluster/Pool:  Leichte De- und Installation
   von Programmen auf mehreren Rechnern
 
-- Auflˆsen von Abh‰ngigkeiten und Konflikten
-  dem Paketsystem ¸berlassen kˆnnen
+- Aufl√∂sen von Abh√§ngigkeiten und Konflikten
+  dem Paketsystem √ºberlassen k√∂nnen
 
-- Eingliederung in das Men¸system
+- Eingliederung in das Men√ºsystem
 
 --newpage software
 --boldon
@@ -121,12 +121,12 @@
 - Kontakt zum Autor herstellen!
   Interesse an einem Paket?
 
-- Lizenzen ¸berpr¸fen:
+- Lizenzen √ºberpr√ºfen:
   Ist das Programm auch frei?
-  aka "Kl‰ren der Fakten"
+  aka "Kl√§ren der Fakten"
   -> Debian Free Software Guidelines (DFSG)
 
-- Abh‰ngigkeiten zu anderen Programmen pr¸fen
+- Abh√§ngigkeiten zu anderen Programmen pr√ºfen
 
 - Kenntnis des Programms erforderlich!
 
@@ -154,7 +154,7 @@ Debian Paket:
     - paket.dsc           ("description")
     - paket.diff.gz       ("differences")
 
-(2) Bin‰rpaket (.deb)     (Binary Package)
+(2) Bin√§rpaket (.deb)     (Binary Package)
 --endoutput
 
 - zu installierende Programme und Pfade
@@ -252,7 +252,7 @@ Die wichtigen Dateien:
 --uloff
 
 changelog:
-(sp‰ter /usr/share/doc/binclock/changelog.Debian.gz)
+(sp√§ter /usr/share/doc/binclock/changelog.Debian.gz)
 ---
 
 --beginoutput
@@ -261,9 +261,9 @@ binclock (1.5-1) unstable; urgency=low
 Nico Golde <nico@ngolde.de>  Fri, 15 Oct 2004 18:45:13 +0200
 --endoutput
 
-- Paketname, Version, Distribution, Priorit‰t
+- Paketname, Version, Distribution, Priorit√§t
 
-- ƒnderungen am Paket, _nicht_ am Quellcode
+- √Ñnderungen am Paket, _nicht_ am Quellcode
 
 - Name des Maintainers, Emailaddresse, Datum
 --## "date -R" erstmal nicht so wichtig
@@ -343,11 +343,11 @@ Description: binary clock for console with color support * (60 Zeichen)
 
 --endoutput
 - Kontrollinformationen, Name des Quellpakets, Subsection, Maintainer, 
-  Abh‰ngigkeiten zum Bauen, Policy-Version
+  Abh√§ngigkeiten zum Bauen, Policy-Version
 
 - Paketname, Architektur
 
-- Abh‰ngigkeiten (mˆgliche weitere Felder: Suggests, Conflicts, Replaces, ...)
+- Abh√§ngigkeiten (m√∂gliche weitere Felder: Suggests, Conflicts, Replaces, ...)
 
 - kurze und lange Beschreibung, kurze Beschreibung darf nicht mit 
   Programmnamen anfangen
@@ -436,7 +436,7 @@ dirs:
 
 conffiles.ex:
 
-  - Konfigurationsdateienm, f¸r manuelle Auswahl, in dem Fall /etc/binclockrc
+  - Konfigurationsdateienm, f√ºr manuelle Auswahl, in dem Fall /etc/binclockrc
 
   - WICHTIG: datei.ex immer in datei umbenennen, wenn sie verwendet wird
 
@@ -479,7 +479,7 @@ vor dem Editieren:
   title="BinClock" command="/usr/bin/binclock"
 --endoutput
 
-- Bestimmung von Oberfl‰che, Abteilung, Titel und das auszuf¸hrende Kommando
+- Bestimmung von Oberfl√§che, Abteilung, Titel und das auszuf√ºhrende Kommando
 
 --newpage Config-5
 --boldon
@@ -496,7 +496,7 @@ rules:
 ---
 --## this doesn't works here, because there is no rules file
 --##--exec vim rules
---exec echo "eigentlich w‰re hier die rules datei, sie ist in diesem beispiel leider nicht enthalten" | vim -
+--exec echo "eigentlich w√§re hier die rules datei, sie ist in diesem beispiel leider nicht enthalten" | vim -
 
 --newpage Config-6
 --boldon
@@ -565,9 +565,9 @@ clean :
 
 - Anpassung der Variablen mit $(DESTDIR)
 
-- Entfernen von Regeln, die von debhelper ¸bernommen werden
+- Entfernen von Regeln, die von debhelper √ºbernommen werden
 
-- bei Programmen mit configure Scripten normalerweise nicht nˆtig, 
+- bei Programmen mit configure Scripten normalerweise nicht n√∂tig, 
   sondern in rules statt $(DESTDIR) prefix einsetzen
 
 
@@ -587,15 +587,15 @@ Letzte Schritte:
 
 .ex-Dateien:
 
-  - Spezialf‰lle, je nach Bedarf editieren und umbennen
+  - Spezialf√§lle, je nach Bedarf editieren und umbennen
 
-  - anschliessend ¸brige .ex Dateien lˆschen
+  - anschliessend √ºbrige .ex Dateien l√∂schen
 
   - eventuell Manual schreiben (so wie in der Policy beschrieben)
 
-  - falls benˆtigt die Maintainer-Scripte editieren: postinst.ex, preinst.ex, 
+  - falls ben√∂tigt die Maintainer-Scripte editieren: postinst.ex, preinst.ex, 
     postrm.ex, prerm.ex
-    -> werden ausgef¸hrt bei Installation, Lˆschen oder Aktualisierung eines Paketes
+    -> werden ausgef√ºhrt bei Installation, L√∂schen oder Aktualisierung eines Paketes
 
   - umbenennen von binclock-1.5.tar.gz in binclock_1.5.orig.tar.gz
 
@@ -613,7 +613,7 @@ Letzte Schritte:
 
 Schritt 1:
 
-  - Zur¸ckkehren in das Stammverzeichnis des Programms, i.d. Fall binclock-1.5/
+  - Zur√ºckkehren in das Stammverzeichnis des Programms, i.d. Fall binclock-1.5/
 
 Schritt 2:
 
@@ -652,13 +652,13 @@ binclock_1.5-1_i386.deb
 binclock_1.5.orig.tar.gz
 --endshelloutput
 
-- Alle ƒnderungen am Originalquelltext (.diff.gz)
+- Alle √Ñnderungen am Originalquelltext (.diff.gz)
 
 - Paketname, Version, Maintainer, Architektur, Build-Depends,
   Policy Version, Dateien mit md5 Summen (.dsc)
 
 - Paketdatum, Version, Distribution, Maintainer,
-  _Ver‰nderungen_, Paketbeschreibung,
+  _Ver√§nderungen_, Paketbeschreibung,
   Dateien mit md5 Summen (.changes)
 
 - Alle zur installierenden Dateien mit Ordnern gezippt (.deb)
@@ -682,7 +682,7 @@ $ lintian binclock_1.5-1_i386.changes
 E: binclock: binary-without-manpage binclock
 --endshelloutput
 
-- Fehler und Warnungen beseitigen (lintian -i f¸r weiter Ekl‰rungen)
+- Fehler und Warnungen beseitigen (lintian -i f√ºr weiter Ekl√§rungen)
 
 2. Testen des Paketinhalts:
 ---
@@ -710,9 +710,9 @@ drwxr-xr-x root/root         0 2004-10-17 16:38:41 ./etc/
 
 - Installieren des Pakets mittels dpkg -i binclock-1.5-1_i386.deb (wahlweise in chroot)
 
---newpage Verˆffentlichung
+--newpage Ver√∂ffentlichung
 --boldon
---huge Verˆffentlichung
+--huge Ver√∂ffentlichung
 --ulon
 --horline
 --boldoff
@@ -722,8 +722,8 @@ drwxr-xr-x root/root         0 2004-10-17 16:38:41 ./etc/
 
 
 
-1. Kopieren des Quellpakets und Bin‰rpakets in
-   gew¸nschten Ordner (z.B. auf einen http-Server)
+1. Kopieren des Quellpakets und Bin√§rpakets in
+   gew√ºnschten Ordner (z.B. auf einen http-Server)
 
 ---
 --beginshelloutput
@@ -733,7 +733,7 @@ binclock_1.5-1_i386.deb  binclock_1.5.orig.tar.gz
 --endshelloutput
 
 2. Erstellen von Sources.gz (Namen, Version, Build-Depends)
-   und Packages.gz (Beschreibung, Name, Abh‰ngigkeiten)
+   und Packages.gz (Beschreibung, Name, Abh√§ngigkeiten)
 
 ---
 --beginshelloutput
@@ -799,4 +799,4 @@ http://www.ngolde.de/papers.html
 
 Vortragsunterlagen: http://www.ngolde.de/papers.html
 
-Pr‰sentationsprogramm: TPP <http://www.ngolde.de/tpp>
+Pr√§sentationsprogramm: TPP <http://www.ngolde.de/tpp>

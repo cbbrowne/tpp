@@ -108,7 +108,7 @@ This should be normal again
   --## comment somewhere else
   --newpage
   --withborder
-  asdf jklö asdf jklö asdf jklö asdf jklö
+  asdf jklÃ¶ asdf jklÃ¶ asdf jklÃ¶ asdf jklÃ¶
 --endoutput
 --newpage other
 --heading Other Things
