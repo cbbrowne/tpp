@@ -1,41 +1,35 @@
-tpp - text presentation program
-===============================
+* tpp - text presentation program
 
-What is tpp?
-------------
+** What is tpp?
 
 tpp stands for text presentation program and is an ncurses-based
 presentation tool. The presentation can be written with your favorite
 editor in a simple description format and then shown on any text
-terminal that is supported by ncurses - ranging from an old VT100 to the
-Linux framebuffer to an xterm.
+terminal that is supported by ncurses - ranging from an old VT100 to
+the Linux framebuffer to an xterm.
 
-Installation
-------------
+** Installation
 
-Prerequisites: 
-  * Ruby 1.8 <http://www.ruby-lang.org/>
-  * a recent version of ncurses
-  * ncurses-ruby <http://ncurses-ruby.berlios.de/>
+   Prerequisites: 
+   * Ruby 1.8 <http://www.ruby-lang.org/>
+   * a recent version of ncurses
+   * ncurses-ruby <http://ncurses-ruby.berlios.de/>
 
-Optionally:
-  * FIGlet (if you want to have huge text printed)
+   Optionally:
+   * FIGlet (if you want to have huge text printed)
 
-Installing tpp:
+   Installing tpp:
 
-Just get root and type make install.
+   Just get root and type ~make install~
 
-Using tpp
----------
-
+** Using tpp
 
 Start tpp with the presentation file you would like to display:
 
 $ tpp presentation.tpp
 
-
 To control tpp, the following keys are available:
-
+#+BEGIN_EXAMPLE
 space bar, cursor-down, cursor-right ... display next page
 b, cursor-up, cursor-left .............. display previous page
 q, Q ................................... quit tpp
@@ -45,6 +39,7 @@ s, S ................................... jump to the start page
 e, E ................................... jump to the last page
 c, C ................................... start command line
 ?, h ................................... show help screen
+#+END_EXAMPLE
 
 On the lower left side of your terminal you will notice the current slide
 number and the total number of slides. Left of that, a '*' will appear when
@@ -57,8 +52,7 @@ When you press 'l' (lower-case L) or 'L', the file you have currently loaded
 into tpp will be reloaded from disk. This is very useful when you write
 presentations with tpp, and constantly need a preview.
 
-Writing tpp presentations
--------------------------
+** Writing tpp presentations
 
 The tpp presentation formats consists of normal text lines and special
 commands. Special commands are contained in lines that begin with "--"
@@ -161,15 +155,13 @@ $% cmd : append the stdout of executing cmd in the shell with % at the beggining
 
 You can comment lines using --##
 
-Examples
---------
+** Examples
 
 For a collection of examples that demonstrate the different features
 of tpp, please have a look into the examples subdirectory in the tpp
 source distribution.
 
-Options:
---------
+** Options:
 
 tpp --help: displays help in text mode
 tpp -l output input.tpp: converts tpp file into a LaTeX slide
@@ -178,18 +170,20 @@ tpp --version: displays version number
 The LaTeX slide output option is currently unsupported and will most likely not
 work correctly!
 
-Vim syntax file
----------------
+** Vim syntax file
+
 To use the vim syntax file you have to copy the tpp.vim file into ~/.vim/syntax/.
 If the directory does not exist you have to create it.
 In the next step you have to copy the following into ~/.vim/filetype.vim:
 
+#+BEGIN_EXAMPLE
 if exists("did_load_filetypes")
 	finish
 endif
 augroup filetype detect
 	au! BufRead,BufNewFile *.tpp  setfiletype tpp
 augroup END
+#+END_EXAMPLE
 
 If your vim editor does not use syntax highlighting in the default setup you have to
 change to the vim command mode and type: syntax on.
@@ -198,31 +192,31 @@ Beside the tpp.vim in the contrib subdirectory, there's also another, more sophi
 version, which we unfortunately cannot distribute due to license reason. You can find
 this file at http://www.trish.de/downloads/tpp.vim
 
-OSX TextWrangler/BBEdit syntax file
------------------------------------
-To use the TextWrangler syntax file you have to copy the TPP.plist file into ~/Library/Application Support/TextWrangler/Language Modules/.
+** OSX TextWrangler/BBEdit syntax file
 
-License
--------
+To use the TextWrangler syntax file you have to copy the TPP.plist
+file into ~/Library/Application Support/TextWrangler/Language Modules/.
 
-##################################################################################################
-#                                                                                                #
-#  tpp - text presentation program                                                               #
-#  Copyright (C) 2004-2005, 2007 Andreas Krennmair <ak@synflood.at>, Nico Golde <nico@ngolde.de> #
-#                                                                                                #
-#  This program is free software; you can redistribute it and/or modify                          #
-#  it under the terms of the GNU General Public License as published by                          #
-#  the Free Software Foundation; either version 2 of the License, or                             #
-#  (at your option) any later version.                                                           #
-#                                                                                                #
-#  This program is distributed in the hope that it will be useful,                               #
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of                                #
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                                 #
-#  GNU General Public License for more details.                                                  #
-#                                                                                                #
-#  You should have received a copy of the GNU General Public License                             #
-#  along with this program; if not, write to the Free Software                                   #
-#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA                     #
-#                                                                                                #
-##################################################################################################
+** License
+
+tpp - text presentation program                                                               
+
+Copyright (C) 2004-2005, 2007 Andreas Krennmair <ak@synflood.at>, Nico Golde <nico@ngolde.de> 
+                                                                                                
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or (at
+your option) any later version.
+                                                                                                
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+                                                                                               
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+USA
+                                                                                                
+
 
