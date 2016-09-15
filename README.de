@@ -1,13 +1,13 @@
-tpp - Text - Präsentations - Programm
+tpp - Text - PrÃ¤sentations - Programm
 =====================================
 
 Was ist tpp?
 ------------
 
-Tpp steht für Text Präsentations Programm und ist ein ncurses-basierendes
-Präsentationswerkzeug. Die Präsentation kann man mit seinem Lieblingseditor
+Tpp steht fÃ¼r Text PrÃ¤sentations Programm und ist ein ncurses-basierendes
+PrÃ¤sentationswerkzeug. Die PrÃ¤sentation kann man mit seinem Lieblingseditor
 in einem einfachen Beschreibungsformat erstellen und danach in einem xterm
-seiner Wahl - welches von ncurses unterstützt wird - vorführen. Das reicht
+seiner Wahl - welches von ncurses unterstÃ¼tzt wird - vorfÃ¼hren. Das reicht
 von einem alten VT 100, einem Linux Framebuffer Terminal bis zum xterm.
 
 Installation
@@ -18,8 +18,8 @@ Voraussetzungen:
   * Eine aktuelle Version der ncurses-Biliothek
   * ncurses-ruby <http://ncurses-ruby.berlios.de/>
 
-Zusätzlich:
-  * FIGlet (für die Darstellung größerer Buchstaben im Textmodus)
+ZusÃ¤tzlich:
+  * FIGlet (fÃ¼r die Darstellung grÃ¶ÃŸerer Buchstaben im Textmodus)
 
 Installation von tpp:
 
@@ -29,14 +29,14 @@ Installation von tpp:
 Anwendung von tpp
 -----------------
 
-Starten von tpp mit der Präsentationdatei, die man anzeigen möchte:
+Starten von tpp mit der PrÃ¤sentationdatei, die man anzeigen mÃ¶chte:
 
 $ tpp presentation.tpp
 
-Zur Steuerung von tpp sind folgende Tastenfunktionen verfügbar:
+Zur Steuerung von tpp sind folgende Tastenfunktionen verfÃ¼gbar:
 
-Leertaste............................... nächster Eintrag innerhalb der Seite
-Leertaste, cursor-unten, cursor-rechts.. Bewegung zur nächsten Seite
+Leertaste............................... nÃ¤chster Eintrag innerhalb der Seite
+Leertaste, cursor-unten, cursor-rechts.. Bewegung zur nÃ¤chsten Seite
 b, cursor-oben, cursor-links............ Bewegung zur vorherigen Seite
 q, Q ................................... tpp beenden
 j, J ................................... Direktsprung zur Seite
@@ -51,60 +51,60 @@ laufende Seitennummer und Gesamtseitenzahl. Links davon erscheint ein "*", wenn
 das Ende der aktuellen Seite erreicht wurde. Wenn kein "*" sichtbar ist, wurde 
 die Ausgabe angehalten (durch den Befehl `---`) und kann mit der Leertaste 
 weitergeschaltet werden. Man kann so mit der Leertaste von Punkt zu Punkt die 
-gesamte Präsentation vorführen.
+gesamte PrÃ¤sentation vorfÃ¼hren.
 
-Wenn man die Tasten 'l' (kleines L) oder 'L' drückt, wird die laufende
-Präsentation erneut aus der Datei geladen. Dies ist besonders günstig, wenn
-man eine tpp-Präsentationen erstellt und dabei eine ständige Vorschau benötigt.
+Wenn man die Tasten 'l' (kleines L) oder 'L' drÃ¼ckt, wird die laufende
+PrÃ¤sentation erneut aus der Datei geladen. Dies ist besonders gÃ¼nstig, wenn
+man eine tpp-PrÃ¤sentationen erstellt und dabei eine stÃ¤ndige Vorschau benÃ¶tigt.
 
-Schreiben einer tpp-Präsentation
+Schreiben einer tpp-PrÃ¤sentation
 --------------------------------
 
-Das Präsentationsformat besteht aus normalen Textzeilen und speziellen
+Das PrÃ¤sentationsformat besteht aus normalen Textzeilen und speziellen
 Kommandos. Die Kommandozeilen beginnen immer mit "--", gefolgt von den
-speziellen Kommandowörtern.
+speziellen KommandowÃ¶rtern.
 
-Die Präsentation besteht aus einer oder mehreren Seiten, die durch den Befehl
+Die PrÃ¤sentation besteht aus einer oder mehreren Seiten, die durch den Befehl
 "--newpage" getrennt werden. Vor dem ersten "--newpage"-Kommando kann eine
-Zusammenfassung für die gesamte Präsentation stehen. Hier lassen sich der Titel,
-Autor und das Datum setzen. Zusätzlich kann jede Seite der Präsentation
+Zusammenfassung fÃ¼r die gesamte PrÃ¤sentation stehen. Hier lassen sich der Titel,
+Autor und das Datum setzen. ZusÃ¤tzlich kann jede Seite der PrÃ¤sentation
 benannt werden. Nach dem "--newpage"-Kommando und einem Leerzeichen wird der 
-Name der nächsten Seite angegeben, falls nicht, wird ein entsprechender Name 
+Name der nÃ¤chsten Seite angegeben, falls nicht, wird ein entsprechender Name 
 automatisch erzeugt.
 
 
 Die folgenden Kommandos sind in der Zusammenfassung erlaubt:
 
---author ............... Setzt den Autor der Präsentation
---title ................ Setzt den Titel der Präsentation
---date ................. Setzt das Datum der Präsentation. Mit "today" fügt man
-   das aktuelle Datum ein. Zusätzlich kann das Datumsformat angegeben werden.
+--author ............... Setzt den Autor der PrÃ¤sentation
+--title ................ Setzt den Titel der PrÃ¤sentation
+--date ................. Setzt das Datum der PrÃ¤sentation. Mit "today" fÃ¼gt man
+   das aktuelle Datum ein. ZusÃ¤tzlich kann das Datumsformat angegeben werden.
    Es entspricht dem Format des date(1)-Befehls und ist in der man-page
    dokumentiert (%M %T %J ist voreingestellt).
 
 --bgcolor <color> ...... Setzt die Hintergrundfarbe. Wird keine Farbe angegeben
    (Transparenz), wird der aktuelle Hintergrund des Terminals verwendet.
 --fgcolor <color> ...... Setzt die Vordergrundfarbe (Textfarbe)
-   Gültige Farben sind white (weiß), yellow (gelb), red (rot), green (grün),
+   GÃ¼ltige Farben sind white (weiÃŸ), yellow (gelb), red (rot), green (grÃ¼n),
    blue (blau), cyan (hellblau), magenta (lila), black (schwarz).
 
---heading <heading> .... Setzt die Kopfzeile für alle Seiten. Die Kopfzeile
-   wird zentriert und fett dargestellt (wenn es das Terminal zulässt). 
+--heading <heading> .... Setzt die Kopfzeile fÃ¼r alle Seiten. Die Kopfzeile
+   wird zentriert und fett dargestellt (wenn es das Terminal zulÃ¤sst). 
 
 Innerhalb der einzelnen Seiten kann man folgende "page-local"-Befehle verwenden:
 
 --withborder ........... Darstellung mit Seitenrand
 --horline .............. Stellt eine horizontale Linie dar
 
---header <text> ........ Fügt eine Kopfzeile ein
---footer <text> ........ Fügt eine Fußzeile ein
+--header <text> ........ FÃ¼gt eine Kopfzeile ein
+--footer <text> ........ FÃ¼gt eine FuÃŸzeile ein
 
 --color <color> ........ Setze eine neue Textfarbe (erlaubte Farben siehe oben)
---left <text> .......... Linksbündige Textdarstellung (Voreinstellung)
+--left <text> .......... LinksbÃ¼ndige Textdarstellung (Voreinstellung)
 --center <text> ........ Zentrierte Textdarstellung
---right <text> ......... Rechtsbündige Textdarstellung
+--right <text> ......... RechtsbÃ¼ndige Textdarstellung
 --- .................... Stoppt die Textausgabe, Fortsetzung mit Leertaste
---sleep <seconds> ...... Stoppt die Ausgabe für <seconds> Sekunden
+--sleep <seconds> ...... Stoppt die Ausgabe fÃ¼r <seconds> Sekunden
 
 --beginoutput .......... markiert den Anfang des gerahmten Textes
 --endoutput ............ markiert das Ende des gerahmten Textes
@@ -129,12 +129,12 @@ Innerhalb der einzelnen Seiten kann man folgende "page-local"-Befehle verwenden:
 --beginslidebottom ..... Beginn einfliegender Text von unten
 --endslidebottom ....... Ende einfliegender Text von unten
 
---huge <text> .......... Der <text> wird in sehr großen Buchstaben dargestellt.
-   Das Programm FIGlet wird benutzt, um die sehr großen Buchstaben darzustellen
+--huge <text> .......... Der <text> wird in sehr groÃŸen Buchstaben dargestellt.
+   Das Programm FIGlet wird benutzt, um die sehr groÃŸen Buchstaben darzustellen
 --sethugefont <font> ... Wenn man den --huge Befehl und FIGlet verwendet, wird
-   mit diesem Befehl die entsprechende FIGlet Schrift ausgewählt (siehe auch
+   mit diesem Befehl die entsprechende FIGlet Schrift ausgewÃ¤hlt (siehe auch
    FIGlet man-page).
---exec <cmd> ........... führt den in <cmd> angegebenen Befehl aus. Nützlich,
+--exec <cmd> ........... fÃ¼hrt den in <cmd> angegebenen Befehl aus. NÃ¼tzlich,
    um z.B. einen Bildbetrachter aufzurufen
 --## <zeile> ........... Zeilen auskommentieren
 
@@ -153,7 +153,7 @@ tpp --help
 
 tpp -l output input.tpp
   Konvertiert die tpp-Datei in eine LaTeX-Datei. Diese Funktion ist
-  derzeit in Überarbeitung.
+  derzeit in Ãœberarbeitung.
 
 tpp --version
   zeigt die tpp-Versionsnummer
@@ -161,10 +161,10 @@ tpp --version
 Vim-Syntax-Datei
 ----------------
 
-Um die Vim-Syntax-Datei zu nutzen, muß die Datei in das Verzeichnis 
-~/.vim/syntax kopiert werden. Falls das Verzeichnis noch nicht existiert, muß
-es angelegt werden. Danach muß das folgende in die Datei ~/.vim/filetype.vim
-eingefügt werden:
+Um die Vim-Syntax-Datei zu nutzen, muÃŸ die Datei in das Verzeichnis 
+~/.vim/syntax kopiert werden. Falls das Verzeichnis noch nicht existiert, muÃŸ
+es angelegt werden. Danach muÃŸ das folgende in die Datei ~/.vim/filetype.vim
+eingefÃ¼gt werden:
 
 if exists("did_load_filetypes")
 	finish
@@ -173,20 +173,20 @@ augroup filetype detect
 	au! BufRead,BufNewFile *.tpp  setfiletype tpp
 augroup END
 
-Falls der Vim keine Syntaxhervorhebung unterstützt, kann das mit dem Kommando
+Falls der Vim keine Syntaxhervorhebung unterstÃ¼tzt, kann das mit dem Kommando
 
 syntax on
 
 aktiviert werden.
 
 Neben der Datei tpp.vim im Verzeichnis contrib existiert eine weitere, 
-verbesserte Variante, welche wir aus Lizenzgründen nicht verbreiten können. 
+verbesserte Variante, welche wir aus LizenzgrÃ¼nden nicht verbreiten kÃ¶nnen. 
 Diese Datei kann unter http://www.trish.de/downloads/tpp.vim bezogen werden.
 
-Übersetzung
+Ãœbersetzung
 -----------
 
-letzte Überarbeitung der Übersetzung April 2006
+letzte Ãœberarbeitung der Ãœbersetzung April 2006
 Thomas Winde <tom@linux-tage.de>, Frank Hofmann <frank.hofmann@efho.de>
 
 Lizenz
