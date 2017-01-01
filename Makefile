@@ -2,6 +2,7 @@
 # Latest Change: Sam Jul 31 00:58:01 CEST 2004 
 #################################################
 
+AUTOMAKE_OPTIONS = foreign
 BIN = tpp  
 prefix=/usr/local
 INSPATH= $(prefix)/bin/
@@ -13,7 +14,7 @@ all:
 
 install :
 	mkdir -p $(DOCPATH)	
-	install -m644 DESIGN CHANGES COPYING README THANKS $(DOCPATH)	
+	install -m644 DESIGN CHANGES COPYING THANKS $(DOCPATH)	
 	install -m644 doc/tpp.1 $(MANPATH)
 	install tpp.rb $(INSPATH)$(BIN)		
 	mkdir -p $(DOCPATH)/contrib

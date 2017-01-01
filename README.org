@@ -13,7 +13,7 @@ the Linux framebuffer to an xterm.
    Prerequisites: 
    * Ruby 1.8 <http://www.ruby-lang.org/>
    * a recent version of ncurses
-   * ncurses-ruby <http://ncurses-ruby.berlios.de/>
+   * ncurses-ruby <https://github.com/eclubb/ncurses-ruby>
 
    Optionally:
    * FIGlet (if you want to have huge text printed)
@@ -26,7 +26,9 @@ the Linux framebuffer to an xterm.
 
 Start tpp with the presentation file you would like to display:
 
+#+BEGIN_EXAMPLE
 $ tpp presentation.tpp
+#+END_EXAMPLE
 
 To control tpp, the following keys are available:
 #+BEGIN_EXAMPLE
@@ -51,6 +53,8 @@ this point.
 When you press 'l' (lower-case L) or 'L', the file you have currently loaded
 into tpp will be reloaded from disk. This is very useful when you write
 presentations with tpp, and constantly need a preview.
+
+[[https://i.imgur.com/dJBxz0x.gif]]
 
 ** Writing tpp presentations
 
