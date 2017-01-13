@@ -530,6 +530,10 @@ class NcursesVisualizer < TppVisualizer
     case ch
       when 100, #d
         68, #D
+        106, #j
+        74, #J
+        108, #l
+        76, #L
         Ncurses::KEY_DOWN,
         Ncurses::KEY_RIGHT
         return :keyright
@@ -537,16 +541,19 @@ class NcursesVisualizer < TppVisualizer
         65, #A
         98, #b
         66, #B
+        104, #h
+        72, #h
+        107, #k
+        75, #k
         Ncurses::KEY_UP,
         Ncurses::KEY_LEFT
         return :keyleft
       when 122, #z
         90 #Z
         return :keyresize
-      # @todo implement redraw
-      #when 114, #r
-        #82 #R
-        #return :redraw
+      when 114, #r
+        82 #R
+        return :reload
       when 113, #q
         81 #Q
         return :quit
@@ -556,18 +563,13 @@ class NcursesVisualizer < TppVisualizer
       when 101, #e
         69 #E
         return :lastpage
-      when 106, #j
-        74 #J
+      when 103, #g
+        71 #g
         return :jumptoslide
-      when 108, #l
-        76 #L
-        return :reload
       when 99, #c
         67 #C
         return :command_prompt
-      when 104, #h
-        72, #H
-        63 #?
+      when 63 #?
         return :help
 
       else
