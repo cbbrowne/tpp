@@ -327,11 +327,6 @@ class TppVisualizer
     Kernel.exit(1)
   end
 
-  def do_command_prompt
-    $stderr.puts "Error: TppVisualizer#do_command_prompt has been called directly."
-    Kernel.exit(1)
-  end
-
   def do_beginslideright
     $stderr.puts "Error: TppVisualizer#do_beginslideright has been called directly."
     Kernel.exit(1)
@@ -566,9 +561,6 @@ class NcursesVisualizer < TppVisualizer
       when 103, #g
         71 #g
         return :jumptoslide
-      when 99, #c
-        67 #C
-        return :command_prompt
       when 63 #?
         return :help
 
@@ -595,63 +587,6 @@ class NcursesVisualizer < TppVisualizer
   def do_withborder
     @withborder = true
     draw_border
-  end
-
-  def do_command_prompt()
-    message = "Press any key to continue :)"
-    cursor_pos = 0
-    max_len = 50
-    prompt = "tpp@localhost:~ $ "
-    string = ""
-    window = @screen.dupwin
-    Ncurses.overwrite(window,@screen) # overwrite @screen with window
-    Ncurses.curs_set(1)
-    Ncurses.echo
-    @screen.move(@termheight/4,1)
-    @screen.clrtoeol()
-    @screen.clrtobot()
-    @screen.mvaddstr(@termheight/4,1,prompt) # add the prompt string
-
-    loop do
-      @screen.mvaddstr(@termheight/4,1+prompt.length,string) # add the code
-      @screen.move(@termheight/4,1+prompt.length+cursor_pos) # move cursor to the end of code
-      ch = Ncurses.getch
-      case ch
-        when Ncurses::KEY_ENTER, 10, ?\n, ?\r
-          Ncurses.curs_set(0)
-          Ncurses.noecho
-          rc = Kernel.system(string)
-          if not rc then
-            @screen.mvaddstr(@termheight/4+1,1,"Error: exec \"#{string}\" failed with error code #{$?}")
-            @screen.mvaddstr(@termheight-2,@termwidth/2-message.length/2,message)
-          end
-          if rc then
-            @screen.mvaddstr(@termheight-2,@termwidth/2-message.length/2,message)
-            ch = Ncurses.getch()
-            @screen.refresh
-          end
-          return
-        when Ncurses::KEY_LEFT
-          cursor_pos = [0, cursor_pos-1].max # jump one character to the left
-        when Ncurses::KEY_RIGHT
-          cursor_pos = [0, cursor_pos+1].max # jump one character to the right
-        when Ncurses::KEY_BACKSPACE
-          string = string[0...([0, cursor_pos-1].max)] + string[cursor_pos..-1]
-          cursor_pos = [0, cursor_pos-1].max
-          @screen.mvaddstr(@termheight/4, 1+prompt.length+string.length, " ")
-        when 0..255
-          if (cursor_pos < max_len)
-            string[cursor_pos,0] = ch.chr
-            cursor_pos += 1
-          else
-            Ncurses.beep
-          end
-      else
-          Ncurses.beep
-      end
-    end
-    Ncurses.curs_set(0)
-
   end
 
   def draw_border
@@ -1215,8 +1150,6 @@ class LatexVisualizer < TppVisualizer
   def do_revon
   end
 
-  def do_command_prompt
-  end
   def do_revoff
   end
 
@@ -1468,11 +1401,6 @@ class InteractiveController < TppController
           when :reload
             @reload_file = true
             return
-          when :command_prompt
-            screen = @vis.store_screen
-            @vis.do_command_prompt
-            @vis.clear
-            @vis.restore_screen(screen)
           when :help
             screen = @vis.store_screen
             @vis.show_help_page
@@ -1588,8 +1516,6 @@ class TextVisualizer < TppVisualizer
   def do_revon
   end
 
-  def do_command_prompt
-  end
   def do_revoff
   end
 
