@@ -390,7 +390,7 @@ class TppVisualizer
   # Receives a _line_, parses it if necessary, and dispatches it
   # to the correct method which then does the correct processing.
   # It returns whether the controller shall wait for input.
-  def visualize(line,eop)
+  def visualize(line)
     case line
       when /^--heading /
         text = line.sub(/^--heading /,"")
@@ -483,6 +483,15 @@ class TppVisualizer
       when /^--color /
         color = line.sub(/^--color /,"").strip
         do_color(color)
+      when /^--include-file /
+        filename = line.sub(/^--include-file /,"").strip
+        f = File.open(filename)
+        f.each_line do |fileLine|
+          fileLine.chomp!
+          if fileLine
+            visualize(fileLine)
+          end
+        end
     else
       print_line(line)
     end
@@ -1308,7 +1317,7 @@ class AutoplayController < TppController
       begin
         line = @pages[@cur_page].next_line
         eop = @pages[@cur_page].eop?
-        wait = @vis.visualize(line,eop)
+        wait = @vis.visualize(line)
       end while not wait and not eop
       # draw slide number on the bottom left and redraw:
       @vis.draw_slidenum(@cur_page + 1, @pages.size, eop)
@@ -1366,7 +1375,7 @@ class InteractiveController < TppController
       begin
         line = @pages[@cur_page].next_line
         eop = @pages[@cur_page].eop?
-        wait = @vis.visualize(line,eop)
+        wait = @vis.visualize(line)
       end while not wait and not eop
       # draw slide number on the bottom left and redraw:
       @vis.draw_slidenum(@cur_page + 1, @pages.size, eop)
@@ -1640,7 +1649,7 @@ class ConversionController < TppController
       begin
         line = p.next_line
         eop = p.eop?
-        @vis.visualize(line,eop)
+        @vis.visualize(line)
       end while not eop
     end
   end
