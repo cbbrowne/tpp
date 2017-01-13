@@ -484,14 +484,18 @@ class TppVisualizer
         color = line.sub(/^--color /,"").strip
         do_color(color)
       when /^--include-file /
-        filename = line.sub(/^--include-file /,"").strip
-        f = File.open(filename)
+        @lastFileName = line.sub(/^--include-file /,"").strip
+        do_beginoutput
+        print_line(@lastFileName)
+        do_beginoutput
+        f = File.open(@lastFileName)
         f.each_line do |fileLine|
           fileLine.chomp!
           if fileLine
-            visualize(fileLine)
+            print_line(fileLine)
           end
         end
+        do_endoutput
     else
       print_line(line)
     end
@@ -517,6 +521,7 @@ class NcursesVisualizer < TppVisualizer
     Ncurses.stdscr.intrflush(false)
     Ncurses.stdscr.keypad(true)
     @screen = Ncurses.stdscr
+    @lastFileName = nil
     setsizes
     Ncurses.start_color()
     Ncurses.use_default_colors()
@@ -566,7 +571,7 @@ class NcursesVisualizer < TppVisualizer
         return :firstpage
       when 101, #e
         69 #E
-        return :lastpage
+        return :edit
       when 103, #g
         71 #g
         return :jumptoslide
@@ -1012,6 +1017,10 @@ class NcursesVisualizer < TppVisualizer
     @screen.dupwin
   end
 
+  def getLastFile
+    @lastFileName
+  end
+
   def restore_screen(s)
     Ncurses.overwrite(s,@screen)
   end
@@ -1392,6 +1401,13 @@ class InteractiveController < TppController
             # @todo: actually implement redraw
           when :lastpage
             @cur_page = @pages.size - 1
+            break
+          when :edit
+            if @vis.getLastFile
+              screen = @vis.store_screen
+              Kernel.system("vim " + @vis.getLastFile)
+              @vis.restore_screen(screen)
+            end
             break
           when :firstpage
             @cur_page = 0
