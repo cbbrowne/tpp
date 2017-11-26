@@ -1349,7 +1349,7 @@ class AutoplayController < TppController
 end
 
 # Implements an interactive controller which feeds the visualizer until it is
-# told to stop, and then reads a key press and executes the appropiate action.
+# told to stop, and then reads a key press and executes the appropriate action.
 class InteractiveController < TppController
 
   def initialize(filename,visualizer_class)

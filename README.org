@@ -155,7 +155,7 @@ following page-local commands are available:
 --endslidebottom: ends the "slide in from the bottom" mode
 
 $$ cmd : append the stdout of executing cmd in the shell
-$% cmd : append the stdout of executing cmd in the shell with % at the beggining of every line(useful with --beginshelloutput).
+$% cmd : append the stdout of executing cmd in the shell with % at the beginning of every line(useful with --beginshelloutput).
 
 You can comment lines using --##
 
